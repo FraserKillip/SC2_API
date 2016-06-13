@@ -51,13 +51,12 @@ before_install:
 
 install:
   - which dotnet;
-    if [ $? -eq 0 ]; then
-    #   echo "Using dotnet:";
+  - if [ $? -eq 0 ]; then
       dotnet --info;
-    else
-      echo "dotnet.exe not found"
+  - else
+      echo "dotnet.exe not found";
       exit 1;
-    fi
+  - fi
 
   # Restore dependencies
   - dotnet restore
@@ -66,7 +65,7 @@ install:
   - dotnet build
   - dotnet pack
 
-script:
+# script:
   # Run tests
 
 # notifications:
