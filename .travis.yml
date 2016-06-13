@@ -1,4 +1,3 @@
----
 sudo: false
 language: c++
 # dotnet cli require Ubuntu 14.04
@@ -51,7 +50,6 @@ before_install:
   - export PATH="$DOTNET_INSTALL_DIR:$PATH"
 
 install:
-  - git submodule update --init --recursive
   - which dotnet;
     if [ $? -eq 0 ]; then
     #   echo "Using dotnet:";
