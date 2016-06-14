@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace SC2_API.Repositories
+namespace SandwichClub.Api.Repositories
 {
     public interface IBaseRepository<TId, T>
     {

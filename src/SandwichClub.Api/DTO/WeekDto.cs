@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace SC2_API.DTO
+namespace SandwichClub.Api.DTO
 {
     public class WeekDto
     {

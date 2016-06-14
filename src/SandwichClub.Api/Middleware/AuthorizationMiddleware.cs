@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 
-namespace SC2_API.AuthorisationMiddleware
+namespace SandwichClub.Api.AuthorisationMiddleware
 {
     public class AuthorizationMiddleware
     {

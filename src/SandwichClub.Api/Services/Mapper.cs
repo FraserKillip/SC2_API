@@ -1,7 +1,7 @@
-using SC2_API.DTO;
-using SC2_API.Repositories.Models;
+using SandwichClub.Api.DTO;
+using SandwichClub.Api.Repositories.Models;
 
-namespace SC2_API.Services
+namespace SandwichClub.Api.Services
 {
     public static class Mapper
     {

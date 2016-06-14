@@ -1,6 +1,6 @@
-using SC2_API.Repositories.Models;
+using SandwichClub.Api.Repositories.Models;
 
-namespace SC2_API.Repositories
+namespace SandwichClub.Api.Repositories
 {
     public interface IWeekRepository : IBaseRepository<int, Week>
     {

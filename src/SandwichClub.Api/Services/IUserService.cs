@@ -1,7 +1,7 @@
 using System.Collections.Generic;
-using SC2_API.DTO;
+using SandwichClub.Api.DTO;
 
-namespace SC2_API.Services
+namespace SandwichClub.Api.Services
 {
     public interface IUserService
     {

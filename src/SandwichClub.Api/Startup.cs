@@ -4,11 +4,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using SC2_API.Repositories;
-using SC2_API.Services;
-using SC2_API.AuthorisationMiddleware;
+using SandwichClub.Api.Repositories;
+using SandwichClub.Api.Services;
+using SandwichClub.Api.AuthorisationMiddleware;
 
-namespace SC2_API
+namespace SandwichClub.Api
 {
     public class Startup
     {

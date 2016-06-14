@@ -1,4 +1,4 @@
-namespace SC2_API.Repositories.Models
+namespace SandwichClub.Api.Repositories.Models
 {
     public class Week
     {

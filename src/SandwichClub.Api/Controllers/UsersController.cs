@@ -1,12 +1,12 @@
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using SC2_API.DTO;
-using SC2_API.Services;
+using SandwichClub.Api.DTO;
+using SandwichClub.Api.Services;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
-namespace SC2_API.Controllers
+namespace SandwichClub.Api.Controllers
 {
     [Route("api/[controller]")]
     public class UsersController : Controller

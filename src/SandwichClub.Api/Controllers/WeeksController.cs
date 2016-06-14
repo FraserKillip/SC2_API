@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
-using SC2_API.DTO;
-using SC2_API.Services;
+using SandwichClub.Api.DTO;
+using SandwichClub.Api.Services;
 
-namespace SC2_API.Controllers
+namespace SandwichClub.Api.Controllers
 {
     [Route("api/[controller]")]
     public class WeeksController : Controller
