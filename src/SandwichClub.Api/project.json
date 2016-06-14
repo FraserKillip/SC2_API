@@ -58,6 +58,6 @@
   },
 
   "tooling": {
-    "defaultNamespace": "SC2_API"
+    "defaultNamespace": "SandwichClub.Api"
   }
 }
