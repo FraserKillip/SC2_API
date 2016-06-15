@@ -35,12 +35,11 @@ install:
   # Restore dependencies
   - dotnet restore src/SandwichClub.Api/
 
-  # Build projects
+script:
+# Build projects
   - dotnet build src/SandwichClub.Api/
   - dotnet pack src/SandwichClub.Api/
-
-# script:
-  # Run tests
+    # Run tests
 
 # notifications:
 #   email:
