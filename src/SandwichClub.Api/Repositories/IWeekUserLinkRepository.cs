@@ -1,12 +1,11 @@
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using SandwichClub.Api.Repositories.Models;
 
 namespace SandwichClub.Api.Repositories
 {
-    public interface IWeekUserLinkRepository : IBaseRepository<int, WeekUserLink>
+    public interface IWeekUserLinkRepository : IBaseRepository<WeekUserLinkId, WeekUserLink>
     {
-        IEnumerable<WeekUserLink> GetByWeekId(int weekId);
-
-        WeekUserLink GetByUserAndWeek(int userId, int weekId);
+        Task<IList<WeekUserLink>> GetByWeekIdAsync(int weekId);
     }
 }

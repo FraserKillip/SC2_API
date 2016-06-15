@@ -7,6 +7,9 @@ using Microsoft.Extensions.Logging;
 using SandwichClub.Api.Repositories;
 using SandwichClub.Api.Services;
 using SandwichClub.Api.AuthorisationMiddleware;
+using SandwichClub.Api.DTO;
+using SandwichClub.Api.Repositories.Models;
+using SandwichClub.Api.Services.Mapper;
 
 namespace SandwichClub.Api
 {
@@ -33,12 +36,15 @@ namespace SandwichClub.Api
 
             services.AddTransient<IWeekRepository, WeekRepository>();
             services.AddTransient<IWeekService, WeekService>();
+            services.AddTransient<IMapper<Week, WeekDto>, WeekMapper>();
 
             services.AddTransient<IUserRepository, UserRepository>();
             services.AddTransient<IUserService, UserService>();
+            services.AddTransient<IMapper<User, UserDto>, UserMapper>();
 
             services.AddTransient<IWeekUserLinkRepository, WeekUserLinkRepository>();
             services.AddTransient<IWeekUserLinkService, WeekUserLinkService>();
+            services.AddTransient<IMapper<WeekUserLink, WeekUserLinkDto>, WeekUserLinkMapper>();
 
             // Add framework services.
             services.AddCors();

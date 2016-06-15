@@ -1,52 +1,14 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using SandwichClub.Api.DTO;
+using SandwichClub.Api.Services.Mapper;
 using SandwichClub.Api.Repositories;
+using SandwichClub.Api.Repositories.Models;
 
 namespace SandwichClub.Api.Services
 {
-    public class UserService : IUserService
+    public class UserService : BaseService<int, User, UserDto, IUserRepository>, IUserService
     {
-        IUserRepository _userRepository;
-        public UserService(IUserRepository userRespository)
+        public UserService(IUserRepository userRespository, IMapper<User, UserDto> mapper) : base(userRespository, mapper)
         {
-            _userRepository = userRespository;
-        }
-
-        public int Count()
-        {
-            return _userRepository.Count();
-        }
-
-        public void Delete(UserDto userDto)
-        {
-            _userRepository.Delete(userDto.ToModel());
-        }
-
-        public void Delete(int id)
-        {
-            _userRepository.Delete(id);
-        }
-
-        public IEnumerable<UserDto> Get()
-        {
-            return _userRepository.Get().Select(u => u.ToDto());
-        }
-
-        public UserDto GetById(int id)
-        {
-            return _userRepository.GetById(id).ToDto();
-        }
-
-        public UserDto Insert(UserDto userDto)
-        {
-            return _userRepository.Insert(userDto.ToModel()).ToDto();
-        }
-
-        public void Update(UserDto userDto)
-        {
-            _userRepository.Update(userDto.ToModel());
         }
     }
 }

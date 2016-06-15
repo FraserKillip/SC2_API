@@ -1,21 +1,22 @@
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace SandwichClub.Api.Repositories
 {
     public interface IBaseRepository<TId, T>
     {
-        T GetById(TId id);
+        Task<T> GetByIdAsync(TId id);
 
-        IEnumerable<T> Get();
+        Task<IList<T>> GetAsync();
 
-        int Count();
+        Task<int> CountAsync();
 
-        T Insert(T t);
+        Task<T> InsertAsync(T t);
 
-        void Update(T t);
+        Task UpdateAsync(T t);
 
-        void Delete(TId id);
+        Task DeleteAsync(TId id);
 
-        void Delete(T t);
+        Task DeleteAsync(T t);
     }
 }

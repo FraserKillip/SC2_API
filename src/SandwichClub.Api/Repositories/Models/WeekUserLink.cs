@@ -7,4 +7,10 @@ namespace SandwichClub.Api.Repositories.Models
         public double Paid { get; set; }
         public int Slices { get; set; }
     }
+
+    public struct WeekUserLinkId
+    {
+        public int UserId { get; set; }
+        public int WeekId { get; set; }
+    }
 }

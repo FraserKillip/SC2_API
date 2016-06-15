@@ -1,72 +1,51 @@
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using SandwichClub.Api.DTO;
+using SandwichClub.Api.Repositories.Models;
 using SandwichClub.Api.Services;
 
 namespace SandwichClub.Api.Controllers
 {
     [Route("api/[controller]")]
-    public class WeeksController : Controller
+    public class WeeksController : ControllerBase<int, WeekDto, IWeekService>
     {
         private IWeekService _weekService;
         private IWeekUserLinkService _weekUserLinkService;
 
-        public WeeksController(IWeekService weekService, IWeekUserLinkService weekUserLinkService)
+        public WeeksController(IWeekService weekService, IWeekUserLinkService weekUserLinkService) : base(weekService)
         {
             _weekService = weekService;
             _weekUserLinkService = weekUserLinkService;
         }
 
-        // GET api/values
-        [HttpGet]
-        public IEnumerable<WeekDto> Get()
-        {
-            return _weekService.Get();
-        }
-
-        // GET api/values/5
-        [HttpGet("{id}")]
-        public WeekDto Get(int id)
-        {
-            return _weekService.GetById(id);
-        }
-
-        // POST api/values
-        [HttpPost]
-        public WeekDto Post([FromBody]WeekDto week)
-        {
-            return _weekService.Insert(week);
-        }
-
-        // PUT api/values/5
-        [HttpPut("{id}")]
-        public WeekDto Put(int id, [FromBody]WeekDto week)
-        {
-            return week;
-        }
-
         // DELETE api/values/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public override Task Delete(int id)
         {
+            return Task.CompletedTask;
         }
 
         [HttpGet("{id}/link/")]
-        public IEnumerable<WeekUserLinkDto> GetLinks(int id)
+        public Task<IEnumerable<WeekUserLinkDto>> GetLinks(int id)
         {
-            return new WeekUserLinkDto[] { };
+            return _weekUserLinkService.GetByWeekIdAsync(id);
         }
 
-        [HttpGet("{id}/link/{linkId}")]
-        public WeekUserLinkDto GetLink(int id, int linkId)
+        [HttpGet("{id}/link/{userId}")]
+        public Task<WeekUserLinkDto> GetLink(int id, int userId)
         {
-            return new WeekUserLinkDto { User = new UserDto { Id = id }, Slices = linkId };
+            return _weekUserLinkService.GetByIdAsync(new WeekUserLinkId {WeekId = id, UserId = userId});
         }
 
-        [HttpPost("{id}/link/")]
-        public WeekUserLinkDto UpdateLink(int id, [FromBody]WeekUserLinkDto link)
+        [HttpPost("{id}/link/{userId}")]
+        public async Task<WeekUserLinkDto> UpdateLink(int weekId, int userId, [FromBody]WeekUserLinkDto link)
         {
-            return _weekUserLinkService.updateLink(link, id);
+            link.WeekId = weekId;
+            link.UserId = userId;
+
+            await _weekUserLinkService.UpdateAsync(link);
+            return link;
         }
     }
 }

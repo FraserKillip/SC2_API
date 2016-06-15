@@ -1,68 +1,26 @@
-using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using SandwichClub.Api.Repositories.Models;
 
 namespace SandwichClub.Api.Repositories
 {
-    public class WeekUserLinkRepository : IWeekUserLinkRepository
+    public class WeekUserLinkRepository : BaseRepository<WeekUserLinkId, WeekUserLink>, IWeekUserLinkRepository
     {
-        private SC2Context _context;
-
-        public WeekUserLinkRepository(SC2Context context)
+        public WeekUserLinkRepository(SC2Context context) : base(context)
         {
-            _context = context;
         }
 
-        public int Count()
+        public override async Task<WeekUserLink> GetByIdAsync(WeekUserLinkId id)
         {
-            return _context.WeekUserLinks.Count();
+            if (id.UserId == 0 || id.WeekId == 0)
+                return null;
+            return await _dbSet.FirstOrDefaultAsync(wul => wul.UserId == id.UserId && wul.WeekId == id.UserId);
         }
 
-        public void Delete(WeekUserLink t)
+        public async Task<IList<WeekUserLink>> GetByWeekIdAsync(int weekId)
         {
-            _context.WeekUserLinks.Remove(t);
-        }
-
-        public void Delete(int id)
-        {
-            Delete(GetById(id));
-        }
-
-        public IEnumerable<WeekUserLink> Get()
-        {
-            return _context.WeekUserLinks.ToList(); ;
-        }
-
-        public WeekUserLink GetById(int id)
-        {
-            return _context.WeekUserLinks.FirstOrDefault(w => w.WeekId == id);
-        }
-
-        public WeekUserLink Insert(WeekUserLink t)
-        {
-            var entity = _context.WeekUserLinks.Add(t).Entity;
-            _context.SaveChanges();
-            return entity;
-        }
-
-        public void Update(WeekUserLink t)
-        {
-            var thing = GetByUserAndWeek(t.UserId, t.WeekId);
-            thing.Paid = t.Paid;
-            thing.Slices = t.Slices;
-            _context.WeekUserLinks.Update(thing);
-            _context.SaveChanges();
-        }
-
-        public IEnumerable<WeekUserLink> GetByWeekId(int weekId)
-        {
-            return _context.WeekUserLinks.Where(wul => wul.WeekId == weekId).ToList();
-        }
-
-        public WeekUserLink GetByUserAndWeek(int userId, int weekId)
-        {
-            return _context.WeekUserLinks.FirstOrDefault(wul => wul.UserId == userId && wul.WeekId == weekId);
+            return await _dbSet.Include(wul => wul.WeekId == weekId).ToListAsync();
         }
     }
 }
