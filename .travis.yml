@@ -33,11 +33,11 @@ before_install:
 
 install:
   # Restore dependencies
-  - dotnet restore
+  - dotnet restore src/SandwichClub.Api/
 
   # Build projects
-  - dotnet build
-  - dotnet pack
+  - dotnet build src/SandwichClub.Api/
+  - dotnet pack src/SandwichClub.Api/
 
 # script:
   # Run tests
