@@ -1,0 +1,52 @@
+language: c++
+# dotnet cli require Ubuntu 14.04
+sudo: required
+dist: trusty
+
+addons:
+  apt:
+    packages:
+    - gettext
+    - libcurl4-openssl-dev
+    - libicu-dev
+    - libssl-dev
+    - libunwind8
+    - zlib1g
+
+os:
+  - linux
+
+env:
+  matrix:
+    - CLI_VERSION: Latest
+      Configuration: Debug
+      Framework: netcoreapp1.0
+    - CLI_VERSION: Latest
+      Configuration: Release
+      Framework: netcoreapp1.0
+
+before_install:
+  - sudo sh -c 'echo "deb [arch=amd64] https://apt-mo.trafficmanager.net/repos/dotnet/ trusty main" > /etc/apt/sources.list.d/dotnetdev.list'
+  - sudo apt-key adv --keyserver apt-mo.trafficmanager.net --recv-keys 417A0893
+  - sudo apt-get update
+
+install:
+  # Restore dependencies
+  - dotnet restore
+
+  # Build projects
+  - dotnet build
+  - dotnet pack
+
+# script:
+  # Run tests
+
+# notifications:
+#   email:
+#     on_failure: always
+#     on_success: change
+#     recipients:
+#       - fill@me.out
+#   slack:
+#     rooms:
+#       secure: ""
