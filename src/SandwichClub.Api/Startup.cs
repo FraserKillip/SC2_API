@@ -1,13 +1,14 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using SandwichClub.Api.Repositories;
 using SandwichClub.Api.Services;
-using SandwichClub.Api.AuthorisationMiddleware;
 using SandwichClub.Api.DTO;
+using SandwichClub.Api.Middleware;
 using SandwichClub.Api.Repositories.Models;
 using SandwichClub.Api.Services.Mapper;
 
@@ -34,17 +35,20 @@ namespace SandwichClub.Api
 
             services.AddDbContext<SC2Context>(options => options.UseSqlite(cs));
 
-            services.AddTransient<IWeekRepository, WeekRepository>();
-            services.AddTransient<IWeekService, WeekService>();
-            services.AddTransient<IMapper<Week, WeekDto>, WeekMapper>();
+            services.AddTransient<IAuthorisationService, FacebookAuthorisationService>();
+            services.AddTransient<IScSession, ScSession>();
 
-            services.AddTransient<IUserRepository, UserRepository>();
-            services.AddTransient<IUserService, UserService>();
-            services.AddTransient<IMapper<User, UserDto>, UserMapper>();
+            services.AddScoped<IWeekRepository, WeekRepository>();
+            services.AddScoped<IWeekService, WeekService>();
+            services.AddScoped<IMapper<Week, WeekDto>, WeekMapper>();
 
-            services.AddTransient<IWeekUserLinkRepository, WeekUserLinkRepository>();
-            services.AddTransient<IWeekUserLinkService, WeekUserLinkService>();
-            services.AddTransient<IMapper<WeekUserLink, WeekUserLinkDto>, WeekUserLinkMapper>();
+            services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IMapper<User, UserDto>, UserMapper>();
+
+            services.AddScoped<IWeekUserLinkRepository, WeekUserLinkRepository>();
+            services.AddScoped<IWeekUserLinkService, WeekUserLinkService>();
+            services.AddScoped<IMapper<WeekUserLink, WeekUserLinkDto>, WeekUserLinkMapper>();
 
             // Add framework services.
             services.AddCors();

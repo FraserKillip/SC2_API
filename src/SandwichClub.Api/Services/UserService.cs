@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using SandwichClub.Api.DTO;
 using SandwichClub.Api.Services.Mapper;
 using SandwichClub.Api.Repositories;
@@ -9,6 +10,11 @@ namespace SandwichClub.Api.Services
     {
         public UserService(IUserRepository userRespository, IMapper<User, UserDto> mapper) : base(userRespository, mapper)
         {
+        }
+
+        public Task<User> GetBySocialId(string id)
+        {
+            return Repository.GetBySocialId(id);
         }
     }
 }

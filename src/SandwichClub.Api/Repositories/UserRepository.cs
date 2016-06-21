@@ -16,5 +16,10 @@ namespace SandwichClub.Api.Repositories
                 return null;
             return await _dbSet.FirstOrDefaultAsync(u => u.UserId == id);
         }
+
+        public async Task<User> GetBySocialId(string id)
+        {
+            return await _dbSet.FirstOrDefaultAsync(u => u.FacebookId == id);
+        }
     }
 }
