@@ -13,21 +13,29 @@ namespace SandwichClub.Api
     {
         public static void Main(string[] args)
         {
-            var config = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("hosting.json", optional: true)
-                .AddEnvironmentVariables(prefix: "ASPNETCORE_")
-                .Build();
+            try
+            {
+                var config = new ConfigurationBuilder()
+    .SetBasePath(Directory.GetCurrentDirectory())
+    .AddJsonFile("hosting.json", optional: true)
+    .AddEnvironmentVariables(prefix: "ASPNETCORE_")
+    .Build();
 
-            var host = new WebHostBuilder()
-                .UseKestrel()
-                .UseContentRoot(Directory.GetCurrentDirectory())
-                .UseConfiguration(config)
-                .UseIISIntegration()
-                .UseStartup<Startup>()
-                .Build();
+                var host = new WebHostBuilder()
+                    .UseKestrel()
+                    .UseContentRoot(Directory.GetCurrentDirectory())
+                    .UseConfiguration(config)
+                    .UseIISIntegration()
+                    .UseStartup<Startup>()
+                    .Build();
 
-            host.Run();
+                host.Run();
+            }
+            catch (Exception)
+            {
+                
+                throw;
+            }
         }
     }
 }

@@ -1,48 +1,59 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using SandwichClub.Api.DTO;
+using SandwichClub.Api.Controllers.Mapper;
 using SandwichClub.Api.Services;
 
 namespace SandwichClub.Api.Controllers
 {
     [Route("api/[controller]")]
-    public abstract class ControllerBase<TId, TDto, TService> : Controller where TDto : class where TService : IBaseService<TId, TDto>
+    public abstract class ControllerBase<TId, T, TDto, TService> : Controller where T : class where TDto : class where TService : IBaseService<TId, T>
     {
         protected readonly TService Service;
+        protected readonly IMapper<T, TDto> Mapper;
 
-        protected ControllerBase(TService service)
+        protected ControllerBase(TService service, IMapper<T, TDto> mapper)
         {
             Service = service;
+            Mapper = mapper;
         }
 
         // GET api/values
         [HttpGet]
         public async Task<IEnumerable<TDto>> Get()
         {
-            return await Service.GetAsync();
+            var items = await Service.GetAsync();
+            return await Mapper.ToDtoAsync(items);
         }
 
         // GET api/values/5
         [HttpGet("{id}")]
         public async Task<TDto> Get(TId id)
         {
-            return await Service.GetByIdAsync(id);
+            var item = await Service.GetByIdAsync(id);
+
+            // Check for nulls
+            if (item == null)
+                return null;
+
+            return await Mapper.ToDtoAsync(item);
         }
 
         // POST api/values
         [HttpPost]
-        public virtual async Task Post([FromBody]TDto value)
+        public virtual async Task<TDto> Post([FromBody]TDto value)
         {
-            await Service.InsertAsync(value);
+            var model = await Mapper.ToModelAsync(value);
+            var updated = await Service.InsertAsync(model);
+            return await Mapper.ToDtoAsync(updated);
         }
 
-        // PUT api/values/5
-        [HttpPut("{id}")]
-        public virtual async Task Put(TId id, [FromBody]TDto value)
+        // PUT api/values
+        [HttpPut]
+        public virtual async Task Put([FromBody]TDto value)
         {
-            await Service.UpdateAsync(value);
+            var model = await Mapper.ToModelAsync(value);
+            await Service.UpdateAsync(model);
         }
 
         // DELETE api/values

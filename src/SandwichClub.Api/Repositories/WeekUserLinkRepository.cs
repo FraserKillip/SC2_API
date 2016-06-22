@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using SandwichClub.Api.Repositories.Models;
@@ -15,12 +16,20 @@ namespace SandwichClub.Api.Repositories
         {
             if (id.UserId == 0 || id.WeekId == 0)
                 return null;
-            return await _dbSet.FirstOrDefaultAsync(wul => wul.UserId == id.UserId && wul.WeekId == id.UserId);
+            return await DbSet.FirstOrDefaultAsync(wul => wul.UserId == id.UserId && wul.WeekId == id.UserId);
         }
 
-        public async Task<IList<WeekUserLink>> GetByWeekIdAsync(int weekId)
+        public override async Task<IEnumerable<WeekUserLink>> GetByIdsAsync(IEnumerable<WeekUserLinkId> ids)
         {
-            return await _dbSet.Include(wul => wul.WeekId == weekId).ToListAsync();
+            var linkTasks = ids.Select(GetByIdAsync);
+            var links = await Task.WhenAll(linkTasks);
+
+            return links.Where(link => link != null);
+        }
+
+        public async Task<IEnumerable<WeekUserLink>> GetByWeekIdAsync(int weekId)
+        {
+            return await DbSet.Where(wul => wul.WeekId == weekId).ToListAsync();
         }
     }
 }

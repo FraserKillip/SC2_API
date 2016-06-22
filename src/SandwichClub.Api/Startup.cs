@@ -5,12 +5,12 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using SandwichClub.Api.Controllers.Mapper;
 using SandwichClub.Api.Repositories;
 using SandwichClub.Api.Services;
 using SandwichClub.Api.DTO;
 using SandwichClub.Api.Middleware;
 using SandwichClub.Api.Repositories.Models;
-using SandwichClub.Api.Services.Mapper;
 
 namespace SandwichClub.Api
 {

@@ -5,11 +5,13 @@ namespace SandwichClub.Api.Repositories
 {
     public interface IBaseRepository<TId, T>
     {
-        Task<T> GetByIdAsync(TId id);
-
-        Task<IList<T>> GetAsync();
+        Task<IEnumerable<T>> GetAsync();
 
         Task<int> CountAsync();
+
+        Task<IEnumerable<T>> GetByIdsAsync(IEnumerable<TId> ids);
+
+        Task<T> GetByIdAsync(TId id);
 
         Task<T> InsertAsync(T t);
 

@@ -1,13 +1,14 @@
-﻿using SandwichClub.Api.DTO;
+﻿using System.Threading.Tasks;
+using SandwichClub.Api.DTO;
 using SandwichClub.Api.Repositories.Models;
 
-namespace SandwichClub.Api.Services.Mapper
+namespace SandwichClub.Api.Controllers.Mapper
 {
     public class UserMapper : BaseMapper<User, UserDto>
     {
-        public override User ToModel(UserDto user)
+        public override Task<User> ToModelAsync(UserDto user)
         {
-            return new User
+            return Task.FromResult(new User
             {
                 UserId = user.Id,
                 FirstName = user.FirstName,
@@ -19,12 +20,12 @@ namespace SandwichClub.Api.Services.Mapper
                 PhoneNumber = user.PhoneNumber,
                 BankName = user.BankName,
                 FirstLogin = user.FirstLogin
-            };
+            });
         }
 
-        public override UserDto ToDto(User user)
+        public override Task<UserDto> ToDtoAsync(User user)
         {
-            return new UserDto
+            return Task.FromResult(new UserDto
             {
                 Id = user.UserId,
                 FirstName = user.FirstName,
@@ -36,7 +37,7 @@ namespace SandwichClub.Api.Services.Mapper
                 PhoneNumber = user.PhoneNumber,
                 BankName = user.BankName,
                 FirstLogin = user.FirstLogin
-            };
+            });
         }
     }
 }

@@ -6,38 +6,40 @@ namespace SandwichClub.Api.Repositories
 {
     public abstract class BaseRepository<TId, T> : IBaseRepository<TId, T> where T : class
     {
-        protected readonly SC2Context _context;
-        protected readonly DbSet<T> _dbSet;
+        protected readonly SC2Context Context;
+        protected readonly DbSet<T> DbSet;
 
         protected BaseRepository(SC2Context context)
         {
-            _context = context;
-            _dbSet = context.Set<T>();
+            Context = context;
+            DbSet = context.Set<T>();
         }
 
         public abstract Task<T> GetByIdAsync(TId id);
 
-        public async Task<IList<T>> GetAsync()
+        public abstract Task<IEnumerable<T>>  GetByIdsAsync(IEnumerable<TId> ids);
+
+        public async Task<IEnumerable<T>> GetAsync()
         {
-            return await _dbSet.ToListAsync();
+            return await DbSet.ToListAsync();
         }
 
         public async Task<int> CountAsync()
         {
-            return await _dbSet.CountAsync();
+            return await DbSet.CountAsync();
         }
 
         public async Task<T> InsertAsync(T t)
         {
-            var i = _dbSet.Add(t);
-            await _context.SaveChangesAsync();
+            var i = DbSet.Add(t);
+            await Context.SaveChangesAsync();
             return i.Entity;
         }
 
         public async Task UpdateAsync(T t)
         {
-            _dbSet.Update(t);
-            await _context.SaveChangesAsync();
+            DbSet.Update(t);
+            await Context.SaveChangesAsync();
         }
 
         public async Task DeleteAsync(TId id)
@@ -48,8 +50,8 @@ namespace SandwichClub.Api.Repositories
 
         public async Task DeleteAsync(T t)
         {
-            _dbSet.Remove(t);
-            await _context.SaveChangesAsync();
+            DbSet.Remove(t);
+            await Context.SaveChangesAsync();
         }
     }
 }

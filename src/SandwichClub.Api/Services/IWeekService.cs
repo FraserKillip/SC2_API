@@ -1,9 +1,8 @@
-using System.Collections.Generic;
-using SandwichClub.Api.DTO;
+using SandwichClub.Api.Repositories.Models;
 
 namespace SandwichClub.Api.Services
 {
-    public interface IWeekService : IBaseService<int, WeekDto>
+    public interface IWeekService : IBaseService<int, Week>
     {
     }
 }

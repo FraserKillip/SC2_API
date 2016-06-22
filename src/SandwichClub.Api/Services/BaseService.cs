@@ -1,25 +1,21 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using SandwichClub.Api.Services.Mapper;
 using SandwichClub.Api.Repositories;
 
 namespace SandwichClub.Api.Services
 {
-    public class BaseService<TId, T, TDto, TRepo> : IBaseService<TId, TDto> where T : class where TDto : class where TRepo : IBaseRepository<TId, T>
+    public class BaseService<TId, T, TRepo> : IBaseService<TId, T> where T : class where TRepo : IBaseRepository<TId, T>
     {
         protected readonly TRepo Repository;
-        protected readonly IMapper<T, TDto> Mapper;
 
-        protected BaseService(TRepo repo, IMapper<T, TDto> mapper)
+        protected BaseService(TRepo repo)
         {
             Repository = repo;
-            Mapper = mapper;
         }
 
-        public virtual async Task<IEnumerable<TDto>> GetAsync()
+        public virtual Task<IEnumerable<T>> GetAsync()
         {
-            var items = await Repository.GetAsync();
-            return await ToDtosAsync(items);
+            return Repository.GetAsync();
         }
 
         public virtual Task<int> CountAsync()
@@ -27,67 +23,29 @@ namespace SandwichClub.Api.Services
             return Repository.CountAsync();
         }
 
-        public virtual async Task<TDto> GetByIdAsync(TId id)
+        public virtual Task<IEnumerable<T>> GetByIdsAsync(IEnumerable<TId> ids)
         {
-            var item = await Repository.GetByIdAsync(id);
-
-            // Check for nulls
-            if (item == null)
-                return null;
-
-            var dto = ToDto(item);
-            await HydrateDtoAsync(item, dto);
-            return dto;
+            return Repository.GetByIdsAsync(ids);
         }
 
-        public virtual async Task<TDto> InsertAsync(TDto t)
+        public virtual Task<T> GetByIdAsync(TId id)
         {
-            var model = ToModel(t);
-            var updated = await Repository.InsertAsync(model);
-            var dto = ToDto(updated);
-            await HydrateDtoAsync(updated, dto);
-            return dto;
+            return Repository.GetByIdAsync(id);
         }
 
-        public virtual Task UpdateAsync(TDto t)
+        public virtual Task<T> InsertAsync(T t)
         {
-            var model = ToModel(t);
-            return Repository.UpdateAsync(model);
+            return Repository.InsertAsync(t);
+        }
+
+        public virtual Task UpdateAsync(T t)
+        {
+            return Repository.UpdateAsync(t);
         }
 
         public virtual Task DeleteAsync(TId id)
         {
             return Repository.DeleteAsync(id);
-        }
-
-        public TDto ToDto(T t)
-        {
-            return Mapper.ToDto(t);
-        }
-
-        public T ToModel(TDto dto)
-        {
-            return Mapper.ToModel(dto);
-        }
-
-        protected virtual Task HydrateDtoAsync(T t, TDto dto)
-        {
-            return Task.CompletedTask;
-        }
-
-        protected virtual async Task<IList<TDto>> ToDtosAsync(IList<T> items)
-        {
-            var dtos = new List<TDto>(items.Count);
-
-            // Convert to dtos
-            foreach (var item in items)
-            {
-                var dto = ToDto(item);
-                await HydrateDtoAsync(item, dto);
-                dtos.Add(dto);
-            }
-
-            return dtos;
         }
     }
 }

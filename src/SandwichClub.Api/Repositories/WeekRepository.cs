@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using SandwichClub.Api.Repositories.Models;
@@ -14,7 +16,12 @@ namespace SandwichClub.Api.Repositories
         {
             if (id == 0)
                 return null;
-            return await _dbSet.FirstOrDefaultAsync(w => w.WeekId == id);
+            return await DbSet.FirstOrDefaultAsync(w => w.WeekId == id);
+        }
+
+        public override async Task<IEnumerable<Week>> GetByIdsAsync(IEnumerable<int> ids)
+        {
+            return await DbSet.Where(w => ids.Contains(w.WeekId)).ToListAsync();
         }
     }
 }

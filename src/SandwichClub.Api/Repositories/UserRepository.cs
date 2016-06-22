@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using SandwichClub.Api.Repositories.Models;
@@ -14,12 +16,17 @@ namespace SandwichClub.Api.Repositories
         {
             if (id == 0)
                 return null;
-            return await _dbSet.FirstOrDefaultAsync(u => u.UserId == id);
+            return await DbSet.FirstOrDefaultAsync(u => u.UserId == id);
+        }
+
+        public override async Task<IEnumerable<User>> GetByIdsAsync(IEnumerable<int> ids)
+        {
+            return await DbSet.Where(u => ids.Contains(u.UserId)).ToListAsync();
         }
 
         public async Task<User> GetBySocialId(string id)
         {
-            return await _dbSet.FirstOrDefaultAsync(u => u.FacebookId == id);
+            return await DbSet.FirstOrDefaultAsync(u => u.FacebookId == id);
         }
     }
 }

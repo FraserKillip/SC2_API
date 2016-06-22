@@ -1,41 +1,34 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using SandwichClub.Api.DTO;
-using SandwichClub.Api.Services.Mapper;
 using SandwichClub.Api.Repositories;
 using SandwichClub.Api.Repositories.Models;
 
 namespace SandwichClub.Api.Services
 {
-    public class WeekUserLinkService : BaseService<WeekUserLinkId, WeekUserLink, WeekUserLinkDto, IWeekUserLinkRepository>, IWeekUserLinkService
+    public class WeekUserLinkService : BaseService<WeekUserLinkId, WeekUserLink, IWeekUserLinkRepository>, IWeekUserLinkService
     {
-        private readonly IUserService _userService;
-
-        public WeekUserLinkService(IWeekUserLinkRepository weekUserLinkRepository, IMapper<WeekUserLink, WeekUserLinkDto> mapper, IUserService userService) : base(weekUserLinkRepository, mapper)
+        public WeekUserLinkService(IWeekUserLinkRepository weekUserLinkRepository) : base(weekUserLinkRepository)
         {
-            _userService = userService;
         }
 
-        public async Task<IEnumerable<WeekUserLinkDto>> GetByWeekIdAsync(int weekId)
+        public Task<IEnumerable<WeekUserLink>> GetByWeekIdAsync(int weekId)
         {
-            var items = await Repository.GetByWeekIdAsync(weekId);
-            return await ToDtosAsync(items);
+            return Repository.GetByWeekIdAsync(weekId);
         }
 
-        public override Task<WeekUserLinkDto> InsertAsync(WeekUserLinkDto linkDto)
+        public override Task<WeekUserLink> InsertAsync(WeekUserLink link)
         {
-            return InsertOrUpdateAsync(linkDto);
+            return InsertOrUpdateAsync(link);
         }
 
-        public override Task UpdateAsync(WeekUserLinkDto linkDto)
+        public override Task UpdateAsync(WeekUserLink link)
         {
-            return InsertOrUpdateAsync(linkDto);
+            return InsertOrUpdateAsync(link);
         }
 
-        public async Task<WeekUserLinkDto> InsertOrUpdateAsync(WeekUserLinkDto linkDto)
+        public async Task<WeekUserLink> InsertOrUpdateAsync(WeekUserLink link)
         {
-            var link = ToModel(linkDto);
-            var id = new WeekUserLinkId {UserId = linkDto.UserId, WeekId = linkDto.WeekId};
+            var id = new WeekUserLinkId {UserId = link.UserId, WeekId = link.WeekId};
             var existingLink = await Repository.GetByIdAsync(id);
             var exists = existingLink != null;
 
@@ -49,12 +42,7 @@ namespace SandwichClub.Api.Services
             else if (!delete)
                 link = await Repository.InsertAsync(link);
 
-            return ToDto(link);
-        }
-
-        protected override async Task HydrateDtoAsync(WeekUserLink item, WeekUserLinkDto dto)
-        {
-            dto.User = await _userService.GetByIdAsync(dto.UserId);
+            return link;
         }
     }
 }
