@@ -34,7 +34,7 @@ namespace SandwichClub.Api.Services
             user.FacebookId = fbuser.id;
             user.FirstName = fbuser.first_name;
             user.LastName = fbuser.last_name;
-            user.Email = fbuser.email;
+            user.Email = fbuser.email ?? "";
             user.AvatarUrl = fbuser.picture.data.url;
 
             if (user.UserId == 0)
