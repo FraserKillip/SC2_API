@@ -1,30 +1,56 @@
-# SC2 API
-[![Build Status](https://travis-ci.org/FraserKillip/SC2_API.svg?branch=master)](https://travis-ci.org/FraserKillip/SC2_API)
+# Sandwich Club API
 
-## How to
+## Controller Endpoints
+##### ControllerBase<T>
 
-*   [Add a Controller and View](https://go.microsoft.com/fwlink/?LinkID=398600)
-*   [Add an appsetting in config and access it in app.](https://go.microsoft.com/fwlink/?LinkID=699562)
-*   [Manage User Secrets using Secret Manager.](https://go.microsoft.com/fwlink/?LinkId=699315)
-*   [Use logging to log a message.](https://go.microsoft.com/fwlink/?LinkId=699316)
-*   [Add packages using NuGet.](https://go.microsoft.com/fwlink/?LinkId=699317)
-*   [Add client packages using Bower.](https://go.microsoft.com/fwlink/?LinkId=699318)
-*   [Target development, staging or production environment.](https://go.microsoft.com/fwlink/?LinkId=699319)
+Controllers extending this class all contain the following endpoints.
 
-## Overview
+**BaseUri:** [controller]
+|Uri|Method|Body|Response|Description|
+|-----|----|----|--------|-----------|
+||GET||T[]|Get all items|
+|{id}|GET||T|Get a single item
+||POST|T|T|Insert an item
+||PUT|T|T|Update an item
+|{id}|DELETE||T|Delete an item
 
-*   [Conceptual overview of what is ASP.NET Core](https://go.microsoft.com/fwlink/?LinkId=518008)
-*   [Fundamentals of ASP.NET Core such as Startup and middleware.](https://go.microsoft.com/fwlink/?LinkId=699320)
-*   [Working with Data](https://go.microsoft.com/fwlink/?LinkId=398602)
-*   [Security](https://go.microsoft.com/fwlink/?LinkId=398603)
-*   [Client side development](https://go.microsoft.com/fwlink/?LinkID=699321)
-*   [Develop on different platforms](https://go.microsoft.com/fwlink/?LinkID=699322)
-*   [Read more on the documentation site](https://go.microsoft.com/fwlink/?LinkID=699323)
+##### UserController : ControllerBase<User>
+...
+##### WeekController : ControllerBase<Week>
+..
+|Uri|Method|Body|Response|Description|
+|-----|----|----|--------|-----------|
+|{weekId}/links|GET||WeekUserLink[]|Get all existing links fror this week
+|{weekId}/links/{userId}|GET||WeekUserLink|Get a specific users link for this week
+|{weekId}/links/{userId}|POST|WeekUserLink|WeekUserLink|Insert/Update a link
 
-## Run & Deploy
+## DTOS
+**User:**
+|Field|Type|Description|
+|-----|----|-----------|
+|Id|int|
+|FirstName|string|
+|LastName|string|
+|Email|string|
+|AvatarUrl|string|
+|Shopper|bool|True if the user is a volunteer for shopping
+|BankDetails|string|Bank details for paying the user
+|PhoneNumber|string|The users phone number for paying them
+|BankName|string|The users bank
+|FirstLogin|bool|
 
-*   [Run your app](https://go.microsoft.com/fwlink/?LinkID=517851)
-*   [Run tools such as EF migrations and more](https://go.microsoft.com/fwlink/?LinkID=517853)
-*   [Publish to Microsoft Azure Web Apps](https://go.microsoft.com/fwlink/?LinkID=398609)
+**Week:**
+|Field|Type|Description|
+|-----|----|-----------|
+|Id|int|Weeks since 1 Jan 1970 starting on a Monday
+|Shopper|int?|The id of the shopper for this week
+|Cost|double|The cost of sandwich club for this week
+|Links|IEnumerable<WeekUserLink>|
 
-We would love to hear your [feedback](https://go.microsoft.com/fwlink/?LinkId=518015)
+**WeekUserLink:**
+|Field|Type|Description|
+|-----|----|-----------|
+|UserId|int|The user this link belongs to
+|WeekId|int|The week this link belongs to
+|Paid|double|The amount the user paid the shopper
+|Slices|int|
