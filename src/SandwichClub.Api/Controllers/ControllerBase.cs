@@ -6,7 +6,7 @@ using SandwichClub.Api.Services;
 
 namespace SandwichClub.Api.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     public abstract class ControllerBase<TId, T, TDto, TService> : Controller where T : class where TDto : class where TService : IBaseService<TId, T>
     {
         protected readonly TService Service;

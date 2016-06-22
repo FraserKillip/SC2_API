@@ -8,7 +8,6 @@ using SandwichClub.Api.Services;
 
 namespace SandwichClub.Api.Controllers
 {
-    [Route("api/[controller]")]
     public class WeeksController : ControllerBase<int, Week, WeekDto, IWeekService>
     {
         private readonly IWeekUserLinkService _weekUserLinkService;
