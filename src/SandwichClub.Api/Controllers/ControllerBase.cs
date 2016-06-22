@@ -50,17 +50,20 @@ namespace SandwichClub.Api.Controllers
 
         // PUT api/values
         [HttpPut]
-        public virtual async Task Put([FromBody]TDto value)
+        public virtual async Task<TDto> Put([FromBody]TDto value)
         {
             var model = await Mapper.ToModelAsync(value);
             await Service.UpdateAsync(model);
+            return value;
         }
 
         // DELETE api/values
         [HttpDelete("{id}")]
-        public virtual async Task Delete(TId id)
+        public virtual async Task<TDto> Delete(TId id)
         {
+            var dto = Get(id);
             await Service.DeleteAsync(id);
+            return await dto;
         }
     }
 }

@@ -30,21 +30,28 @@ namespace SandwichClub.Api.Controllers
             return Task.CompletedTask;
         }
 
-        [HttpGet("{id}/link")]
+        [HttpGet("/current")]
+        public async Task<Week> GetCurrentWeek()
+        {
+            var currentWeek = await Service.GetCurrentWeekAsync();
+            return await Mapper.ToDtoAsync(currentWeek);
+        }
+
+        [HttpGet("{id}/links")]
         public async Task<IEnumerable<WeekUserLinkDto>> GetLinks(int id)
         {
             var links = await _weekUserLinkService.GetByWeekIdAsync(id);
             return await _weekUserLinkMapper.ToDtoAsync(links);
         }
 
-        [HttpGet("{id}/link/{userId}")]
+        [HttpGet("{id}/links/{userId}")]
         public async Task<WeekUserLinkDto> GetLink(int id, int userId)
         {
             var link = await _weekUserLinkService.GetByIdAsync(new WeekUserLinkId {WeekId = id, UserId = userId});
             return await _weekUserLinkMapper.ToDtoAsync(link);
         }
 
-        [HttpPost("{id}/link/{userId}")]
+        [HttpPost("{id}/links/{userId}")]
         public async Task<WeekUserLinkDto> UpdateLink(int weekId, int userId, [FromBody]WeekUserLinkDto linkDto)
         {
             linkDto.WeekId = weekId;
