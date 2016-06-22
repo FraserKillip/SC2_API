@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using SandwichClub.Api.DTO;
+using SandwichClub.Api.Dto;
 using SandwichClub.Api.Repositories.Models;
 using SandwichClub.Api.Services;
 

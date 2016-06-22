@@ -8,7 +8,7 @@ using Microsoft.Extensions.Logging;
 using SandwichClub.Api.Controllers.Mapper;
 using SandwichClub.Api.Repositories;
 using SandwichClub.Api.Services;
-using SandwichClub.Api.DTO;
+using SandwichClub.Api.Dto;
 using SandwichClub.Api.Middleware;
 using SandwichClub.Api.Repositories.Models;
 
@@ -33,7 +33,7 @@ namespace SandwichClub.Api
         {
             string cs = "Data Source=" + System.IO.Directory.GetCurrentDirectory() + "/database.sqlite";
 
-            services.AddDbContext<SC2Context>(options => options.UseSqlite(cs));
+            services.AddDbContext<ScContext>(options => options.UseSqlite(cs));
 
             services.AddTransient<IAuthorisationService, FacebookAuthorisationService>();
             services.AddTransient<IScSession, ScSession>();

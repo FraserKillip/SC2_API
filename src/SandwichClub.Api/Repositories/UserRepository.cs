@@ -8,7 +8,7 @@ namespace SandwichClub.Api.Repositories
 {
     public class UserRepository : BaseRepository<int, User>, IUserRepository
     {
-        public UserRepository(SC2Context context) : base(context)
+        public UserRepository(ScContext context) : base(context)
         {
         }
 

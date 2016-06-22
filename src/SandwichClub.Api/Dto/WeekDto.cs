@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace SandwichClub.Api.DTO
+namespace SandwichClub.Api.Dto
 {
     public class WeekDto
     {

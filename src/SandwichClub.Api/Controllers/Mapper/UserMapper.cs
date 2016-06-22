@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using SandwichClub.Api.DTO;
+using SandwichClub.Api.Dto;
 using SandwichClub.Api.Repositories.Models;
 
 namespace SandwichClub.Api.Controllers.Mapper

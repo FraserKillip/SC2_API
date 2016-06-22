@@ -3,9 +3,9 @@ using SandwichClub.Api.Repositories.Models;
 
 namespace SandwichClub.Api.Repositories
 {
-    public class SC2Context : DbContext
+    public class ScContext : DbContext
     {
-        public SC2Context(DbContextOptions<SC2Context> options)
+        public ScContext(DbContextOptions<ScContext> options)
             : base(options)
         { }
 

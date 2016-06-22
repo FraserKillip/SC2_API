@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using SandwichClub.Api.Controllers.Mapper;
-using SandwichClub.Api.DTO;
+using SandwichClub.Api.Dto;
 using SandwichClub.Api.Repositories.Models;
 using SandwichClub.Api.Services;
 

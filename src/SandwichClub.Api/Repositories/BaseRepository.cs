@@ -6,10 +6,10 @@ namespace SandwichClub.Api.Repositories
 {
     public abstract class BaseRepository<TId, T> : IBaseRepository<TId, T> where T : class
     {
-        protected readonly SC2Context Context;
+        protected readonly ScContext Context;
         protected readonly DbSet<T> DbSet;
 
-        protected BaseRepository(SC2Context context)
+        protected BaseRepository(ScContext context)
         {
             Context = context;
             DbSet = context.Set<T>();

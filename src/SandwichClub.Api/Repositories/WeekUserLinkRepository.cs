@@ -8,7 +8,7 @@ namespace SandwichClub.Api.Repositories
 {
     public class WeekUserLinkRepository : BaseRepository<WeekUserLinkId, WeekUserLink>, IWeekUserLinkRepository
     {
-        public WeekUserLinkRepository(SC2Context context) : base(context)
+        public WeekUserLinkRepository(ScContext context) : base(context)
         {
         }
 

@@ -1,4 +1,4 @@
-namespace SandwichClub.Api.DTO
+namespace SandwichClub.Api.Dto
 {
     public class UserDto
     {
