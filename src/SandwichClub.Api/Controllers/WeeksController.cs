@@ -13,10 +13,10 @@ namespace SandwichClub.Api.Controllers
         private readonly IWeekUserLinkService _weekUserLinkService;
         private readonly IMapper<WeekUserLink, WeekUserLinkDto> _weekUserLinkMapper;
 
-        public WeeksController(IWeekService weekService, IWeekUserLinkService weekUserLinkService, IMapper<Week, WeekDto> weekMapper, IMapper<WeekUserLink, WeekUserLinkDto> weekUserLinkMapper, IMapper<WeekUserLink, WeekUserLinkDto> weekUserLinkMapper1) : base(weekService, weekMapper)
+        public WeeksController(IWeekService weekService, IWeekUserLinkService weekUserLinkService, IMapper<Week, WeekDto> weekMapper, IMapper<WeekUserLink, WeekUserLinkDto> weekUserLinkMapper) : base(weekService, weekMapper)
         {
             _weekUserLinkService = weekUserLinkService;
-            _weekUserLinkMapper = weekUserLinkMapper1;
+            _weekUserLinkMapper = weekUserLinkMapper;
         }
 
         /// <summary>
