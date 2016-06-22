@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Concurrent;
+using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
@@ -26,6 +27,7 @@ namespace SandwichClub.Api.Middleware
 
             if (!context.Request.Headers.Keys.Contains("Sandwich-Auth-Token"))
             {
+                context.Response.StatusCode = (int) HttpStatusCode.Unauthorized;
                 await context.Response.WriteAsync("Missing Sandwich-Auth-Token header");
                 return;
             }
@@ -57,7 +59,10 @@ namespace SandwichClub.Api.Middleware
             if (session.CurrentUser != null)
                 await _next.Invoke(context);
             else
+            {
+                context.Response.StatusCode = (int) HttpStatusCode.Unauthorized;
                 await context.Response.WriteAsync("Invalid Sandwich-Auth-Token header");
+            }
         }
 
         private class UserAuthItem
