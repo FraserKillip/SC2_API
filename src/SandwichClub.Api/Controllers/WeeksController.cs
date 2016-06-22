@@ -25,16 +25,9 @@ namespace SandwichClub.Api.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpDelete("{id}")]
-        public override Task Delete(int id)
+        public override Task<WeekDto> Delete(int id)
         {
-            return Task.CompletedTask;
-        }
-
-        [HttpGet("/current")]
-        public async Task<Week> GetCurrentWeek()
-        {
-            var currentWeek = await Service.GetCurrentWeekAsync();
-            return await Mapper.ToDtoAsync(currentWeek);
+            return Get(id);
         }
 
         [HttpGet("{id}/links")]
