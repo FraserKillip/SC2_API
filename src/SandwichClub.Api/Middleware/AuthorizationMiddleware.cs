@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Concurrent;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using SandwichClub.Api.Repositories.Models;
 using SandwichClub.Api.Services;
 
@@ -21,9 +23,18 @@ namespace SandwichClub.Api.Middleware
 
         public async Task Invoke(HttpContext context)
         {
+            var config = context.RequestServices.GetService<IOptions<AuthorizationMiddlewareConfig>>();
             var session = context.RequestServices.GetService<IScSession>();
             var authorisationService = context.RequestServices.GetService<IAuthorisationService>();
             session.WithContext(context);
+
+            if (config.Value.IgnoreAuth)
+            {
+                var userService = context.RequestServices.GetService<IUserService>();
+                session.CurrentUser = (await userService.GetAsync()).FirstOrDefault();
+                await _next(context);
+                return;
+            }
 
             if (!context.Request.Headers.Keys.Contains("Sandwich-Auth-Token"))
             {
@@ -70,5 +81,10 @@ namespace SandwichClub.Api.Middleware
             public User User { get; set; }
             public DateTime CacheTime { get; set; }
         }
+    }
+
+    public class AuthorizationMiddlewareConfig
+    {
+        public bool IgnoreAuth { get; set; }
     }
 }

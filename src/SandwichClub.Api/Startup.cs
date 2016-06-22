@@ -1,6 +1,6 @@
+using System;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -49,6 +49,13 @@ namespace SandwichClub.Api
             services.AddScoped<IWeekUserLinkRepository, WeekUserLinkRepository>();
             services.AddScoped<IWeekUserLinkService, WeekUserLinkService>();
             services.AddScoped<IMapper<WeekUserLink, WeekUserLinkDto>, WeekUserLinkMapper>();
+
+            // Configs
+            services.Configure<AuthorizationMiddlewareConfig>(config =>
+            {
+                config.IgnoreAuth = Convert.ToBoolean(Configuration["IgnoreAuth"] ?? "false");
+            });
+            services.AddOptions();
 
             // Add framework services.
             services.AddCors();
