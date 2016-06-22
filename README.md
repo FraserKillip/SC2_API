@@ -20,6 +20,7 @@ Controllers extending this class all contain the following endpoints.
 ..
 |Uri|Method|Body|Response|Description|
 |-----|----|----|--------|-----------|
+|current|GET||Week|Get the current week
 |{weekId}/links|GET||WeekUserLink[]|Get all existing links fror this week
 |{weekId}/links/{userId}|GET||WeekUserLink|Get a specific users link for this week
 |{weekId}/links/{userId}|POST|WeekUserLink|WeekUserLink|Insert/Update a link

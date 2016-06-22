@@ -30,6 +30,13 @@ namespace SandwichClub.Api.Controllers
             return Get(id);
         }
 
+        [HttpGet("current")]
+        public async Task<WeekDto> GetCurrent()
+        {
+            var currentWeek = await Service.GetCurrentWeekAsync();
+            return await Mapper.ToDtoAsync(currentWeek);
+        }
+
         [HttpGet("{id}/links")]
         public async Task<IEnumerable<WeekUserLinkDto>> GetLinks(int id)
         {

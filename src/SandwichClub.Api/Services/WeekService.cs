@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using SandwichClub.Api.Repositories;
 using SandwichClub.Api.Repositories.Models;
@@ -42,6 +43,23 @@ namespace SandwichClub.Api.Services
                 week = await Repository.InsertAsync(week);
 
             return week;
+        }
+
+        public Task<Week> GetCurrentWeekAsync()
+        {
+            return GetByIdAsync(GetWeekId(DateTime.Now));
+        }
+
+        public int GetWeekId(DateTime date)
+        {
+            // Get the date
+            date = date.Date;
+            // Change to the start of the week
+            date = date.DayOfWeek != DayOfWeek.Sunday ? date.AddDays(DayOfWeek.Monday - date.DayOfWeek) : date.AddDays(-6);
+
+            // Subtract Monday 5th of January 1970
+            var timespan = date.Subtract(DateTime.Parse("5/1/1970"));
+            return 1 + (int) timespan.TotalDays / 7;
         }
     }
 }
