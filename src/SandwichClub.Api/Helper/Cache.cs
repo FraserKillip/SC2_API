@@ -62,9 +62,26 @@ namespace SandwichClub.Api.Helper
         public async Task<T> GetOrAddAsync(TKey key, Func<TKey, Task<T>> add)
         {
             var items = _items;
-            var item = items.Keyed.GetOrAdd(key, GetAsyncCacheItem(key, add));
+            var added = false;
 
-            return await item.Item.Value;
+            // Try get the item
+            var item = items.Keyed.GetOrAdd(key, GetAsyncCacheItem(key, async k =>
+            {
+                added = true;
+                // Get the value
+                return await add(k);
+            }));
+
+            // Wait for the value
+            var value = await item.Item.Value;
+
+            // Check if we added a new item
+            if (added)
+            {
+                AddItemToOrdered(items, item);
+            }
+
+            return value;
         }
 
         public async Task<IEnumerable<T>> GetOrAddAsync(IEnumerable<TKey> keys, Func<TKey, Task<T>> addSingle)
@@ -100,6 +117,10 @@ namespace SandwichClub.Api.Helper
 
         private void AddItemToOrdered(CacheItems items, CacheItem item)
         {
+            // If we don't have a maximum size, there is no point in keeping the ordered list
+            if (_cacheSize == int.MaxValue)
+                return;
+
             CacheItem removed = null;
             // Update order
             lock (items.Lock)
