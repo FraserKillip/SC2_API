@@ -51,10 +51,7 @@ namespace SandwichClub.Api
             services.AddScoped<IMapper<WeekUserLink, WeekUserLinkDto>, WeekUserLinkMapper>();
 
             // Configs
-            services.Configure<AuthorizationMiddlewareConfig>(config =>
-            {
-                config.IgnoreAuth = Convert.ToBoolean(Configuration["IgnoreAuth"] ?? "false");
-            });
+            services.Configure<AuthorizationMiddlewareConfig>(Configuration);
             services.AddOptions();
 
             // Add framework services.
