@@ -33,10 +33,10 @@ namespace SandwichClub.Api
         {
             string cs = "Data Source=" + System.IO.Directory.GetCurrentDirectory() + "/database.sqlite";
 
-            services.AddDbContext<ScContext>(options => options.UseSqlite(cs));
+            services.AddDbContext<ScContext>(options => options.UseSqlite(cs).UseMemoryCache(null));
 
             services.AddTransient<IAuthorisationService, FacebookAuthorisationService>();
-            services.AddTransient<IScSession, ScSession>();
+            services.AddScoped<IScSession, ScSession>();
 
             services.AddScoped<IWeekRepository, WeekRepository>();
             services.AddScoped<IWeekService, WeekService>();
