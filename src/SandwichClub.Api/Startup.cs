@@ -66,6 +66,11 @@ namespace SandwichClub.Api
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
+            // Migrate the database
+            var context = app.ApplicationServices.GetService<ScContext>();
+            context.Database.Migrate();
+
+
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
 
