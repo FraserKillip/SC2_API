@@ -39,7 +39,7 @@ namespace SandwichClub.Api.Middleware
             if (!context.Request.Headers.Keys.Contains("Sandwich-Auth-Token"))
             {
                 context.Response.StatusCode = (int) HttpStatusCode.Unauthorized;
-                await context.Response.WriteAsync("Missing Sandwich-Auth-Token header");
+                await context.Response.WriteAsync("Missing Sandwich-Auth-Token header.pleb");
                 return;
             }
 
