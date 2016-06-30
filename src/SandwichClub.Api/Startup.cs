@@ -33,10 +33,10 @@ namespace SandwichClub.Api
         {
             string cs = "Data Source=" + System.IO.Directory.GetCurrentDirectory() + "/database.sqlite";
 
-            services.AddDbContext<ScContext>(options => options.UseSqlite(cs));
+            services.AddDbContext<ScContext>(options => options.UseSqlite(cs).UseMemoryCache(null));
 
             services.AddTransient<IAuthorisationService, FacebookAuthorisationService>();
-            services.AddTransient<IScSession, ScSession>();
+            services.AddScoped<IScSession, ScSession>();
 
             services.AddScoped<IWeekRepository, WeekRepository>();
             services.AddScoped<IWeekService, WeekService>();
@@ -51,10 +51,7 @@ namespace SandwichClub.Api
             services.AddScoped<IMapper<WeekUserLink, WeekUserLinkDto>, WeekUserLinkMapper>();
 
             // Configs
-            services.Configure<AuthorizationMiddlewareConfig>(config =>
-            {
-                config.IgnoreAuth = Convert.ToBoolean(Configuration["IgnoreAuth"] ?? "false");
-            });
+            services.Configure<AuthorizationMiddlewareConfig>(Configuration);
             services.AddOptions();
 
             // Add framework services.
@@ -66,6 +63,11 @@ namespace SandwichClub.Api
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
+            // Migrate the database
+            var context = app.ApplicationServices.GetService<ScContext>();
+            context.Database.Migrate();
+
+
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
 
