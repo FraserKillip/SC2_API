@@ -1,4 +1,3 @@
-using System;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -11,6 +10,7 @@ using SandwichClub.Api.Services;
 using SandwichClub.Api.Dto;
 using SandwichClub.Api.Middleware;
 using SandwichClub.Api.Repositories.Models;
+using Newtonsoft.Json.Serialization;
 
 namespace SandwichClub.Api
 {
@@ -56,8 +56,9 @@ namespace SandwichClub.Api
 
             // Add framework services.
             services.AddCors();
-            services.AddMvc();
-
+            services.AddMvc().AddJsonOptions(options => {
+                options.SerializerSettings.ContractResolver = new DefaultContractResolver();
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
