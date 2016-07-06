@@ -38,6 +38,7 @@ namespace SandwichClub.Api.Repositories
 
         public async Task UpdateAsync(T t)
         {
+            DbSet.Attach(t);
             DbSet.Update(t);
             await Context.SaveChangesAsync();
         }
