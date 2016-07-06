@@ -49,8 +49,8 @@ namespace SandwichClub.Api.Controllers
         }
 
         // PUT api/values
-        [HttpPut]
-        public virtual async Task<TDto> Put([FromBody]TDto value)
+        [HttpPut("{id}")]
+        public virtual async Task<TDto> Put(TId id, [FromBody]TDto value)
         {
             var model = await Mapper.ToModelAsync(value);
             await Service.UpdateAsync(model);

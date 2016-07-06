@@ -48,6 +48,10 @@ namespace SandwichClub.Api.Controllers
         public async Task<WeekUserLinkDto> GetLink(int id, int userId)
         {
             var link = await _weekUserLinkService.GetByIdAsync(new WeekUserLinkId {WeekId = id, UserId = userId});
+            if(link == null) {
+                return new WeekUserLinkDto {UserId = userId, WeekId = id, Paid = 0, Slices = 0 };
+            }
+
             return await _weekUserLinkMapper.ToDtoAsync(link);
         }
 
