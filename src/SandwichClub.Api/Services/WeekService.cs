@@ -58,7 +58,7 @@ namespace SandwichClub.Api.Services
             date = date.DayOfWeek != DayOfWeek.Sunday ? date.AddDays(DayOfWeek.Monday - date.DayOfWeek) : date.AddDays(-6);
 
             // Subtract Monday 5th of January 1970
-            var timespan = date.Subtract(DateTime.Parse("5/1/1970"));
+            var timespan = date.Subtract(new DateTime(1970, 1, 7));
             return 1 + (int) timespan.TotalDays / 7;
         }
     }

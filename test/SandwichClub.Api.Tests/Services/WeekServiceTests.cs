@@ -10,11 +10,13 @@ namespace SandwichClub.Api.Tests.Services
 {
     public class WeekServiceTests : UnitTestBase<WeekService>
     {
+        private static readonly DateTime startOfComputerTime = new DateTime(1970, 1, 1);
+
         [Fact]
         public void GetWeekId_GivenStartOfComputerTime_IdShouldBeZero()
         {
             // When
-            var weekId = Service.GetWeekId(DateTime.Parse("1970/01/01"));
+            var weekId = Service.GetWeekId(startOfComputerTime);
 
             // Verify
             Assert.Equal(0, weekId);
@@ -24,7 +26,7 @@ namespace SandwichClub.Api.Tests.Services
         public void GetWeekId_GivenStartOfComputerTimeAndOneWeek_IdShouldBeOne()
         {
             // When
-            var weekId = Service.GetWeekId(DateTime.Parse("1970/01/01").AddDays(7));
+            var weekId = Service.GetWeekId(startOfComputerTime.AddDays(7));
 
             // Verify
             Assert.Equal(1, weekId);
@@ -35,7 +37,7 @@ namespace SandwichClub.Api.Tests.Services
         {
             // Given
             // Get a week which should match id 1
-            var date = DateTime.Parse("1970/01/01").AddDays(7);
+            var date = startOfComputerTime.AddDays(7);
             // Translate to the monday of that week
             date = date.AddDays((int)DayOfWeek.Monday-(int)date.DayOfWeek);
             var originalId = Service.GetWeekId(date);
