@@ -1,16 +1,20 @@
 using System;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using SandwichClub.Api.Repositories;
 using SandwichClub.Api.Repositories.Models;
 
 namespace SandwichClub.Api.Services
 {
-    public class WeekService : BaseService<int, Week, IWeekRepository>, IWeekService
+    public class WeekService : SaveOnlyBaseService<int, Week, IWeekRepository>, IWeekService
     {
-        public WeekService(IWeekRepository weekRepository) : base(weekRepository)
+        public WeekService(IWeekRepository weekRepository, ILogger<WeekService> logger) : base(weekRepository, logger)
         {
         }
 
+        /// <summary>
+        /// Provides a persisted week or the default value
+        /// </summary>
         public override async Task<Week> GetByIdAsync(int weekId)
         {
             var week = await Repository.GetByIdAsync(weekId);
@@ -18,31 +22,17 @@ namespace SandwichClub.Api.Services
             return week ?? new Week {WeekId = weekId};
         }
 
-        public override Task<Week> InsertAsync(Week week)
+        /// <summary>
+        /// Checks if the cost of the week is the default value and that there is no shopper
+        /// </summary>
+        protected override bool SaveShouldDelete(Week week)
         {
-            return InsertOrUpdateAsync(week);
+            return week.Cost <= 0.0 && week.ShopperUserId == null;
         }
 
-        public override Task UpdateAsync(Week week)
+                public override int GetId(Week t)
         {
-            return InsertOrUpdateAsync(week);
-        }
-
-        public async Task<Week> InsertOrUpdateAsync(Week week)
-        {
-            var existingWeek = await Repository.GetByIdAsync(week.WeekId);
-
-            var exists = existingWeek != null;
-            var delete = week.Cost <= 0.0 && week.ShopperUserId == null;
-
-            if (exists && delete)
-                await Repository.DeleteAsync(existingWeek);
-            else if (exists)
-                await Repository.UpdateAsync(week);
-            else if (!delete)
-                week = await Repository.InsertAsync(week);
-
-            return week;
+            return t.WeekId;
         }
 
         public Task<Week> GetCurrentWeekAsync()

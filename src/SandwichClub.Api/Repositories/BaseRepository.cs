@@ -1,6 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using AutoMapper;
+using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Linq;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace SandwichClub.Api.Repositories
 {
@@ -8,21 +11,32 @@ namespace SandwichClub.Api.Repositories
     {
         protected readonly ScContext Context;
         protected readonly DbSet<T> DbSet;
+        protected readonly IMapper Mapper;
 
-        protected BaseRepository(ScContext context)
+        protected BaseRepository(ScContext context, IMapper mapper)
         {
             Context = context;
             DbSet = context.Set<T>();
+            Mapper = mapper;
         }
 
         public abstract Task<T> GetByIdAsync(TId id);
 
         public abstract Task<IEnumerable<T>>  GetByIdsAsync(IEnumerable<TId> ids);
 
-        public async Task<IEnumerable<T>> GetAsync()
+        protected EntityEntry<T> Entry(T t)
         {
-            return await DbSet.ToListAsync();
+            var entry = Context.ChangeTracker.Entries<T>().Where(e => t.Equals(e.Entity)).FirstOrDefault();
+            if (entry != null)
+            {
+                Mapper.Map<T, T>(t, entry.Entity);
+                return entry;
+            }
+            return Context.Attach<T>(t);
         }
+
+        public async Task<IEnumerable<T>> GetAsync()
+            => await DbSet.ToListAsync();
 
         public async Task<int> CountAsync()
         {
@@ -31,28 +45,37 @@ namespace SandwichClub.Api.Repositories
 
         public async Task<T> InsertAsync(T t)
         {
-            var i = DbSet.Add(t);
+            var entry = Entry(t);
+            if (entry.State != EntityState.Unchanged)
+                throw new DatabaseException("Can't insert entity which already exists");
+            entry.State = EntityState.Added;
             await Context.SaveChangesAsync();
-            return i.Entity;
+            return entry.Entity;
         }
 
-        public async Task UpdateAsync(T t)
+        public async Task<T> UpdateAsync(T t)
         {
-            DbSet.Attach(t);
-            DbSet.Update(t);
+            var entry = Entry(t);
+            if (entry.State == EntityState.Deleted)
+                throw new DatabaseException("Can't update entity which is deleted");
+            entry.State = EntityState.Modified;
             await Context.SaveChangesAsync();
+            return entry.Entity;
         }
 
-        public async Task DeleteAsync(TId id)
+        public async Task<T> DeleteAsync(TId id)
         {
-            
-            await DeleteAsync(await GetByIdAsync(id));
+            return await DeleteAsync(await GetByIdAsync(id));
         }
 
-        public async Task DeleteAsync(T t)
+        public async Task<T> DeleteAsync(T t)
         {
-            DbSet.Remove(t);
+            var entry = Entry(t);
+            if (entry.State == EntityState.Deleted)
+                return entry.Entity;
+            entry.State = EntityState.Deleted;
             await Context.SaveChangesAsync();
+            return entry.Entity;
         }
     }
 }

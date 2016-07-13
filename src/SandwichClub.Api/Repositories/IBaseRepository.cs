@@ -15,10 +15,10 @@ namespace SandwichClub.Api.Repositories
 
         Task<T> InsertAsync(T t);
 
-        Task UpdateAsync(T t);
+        Task<T> UpdateAsync(T t);
 
-        Task DeleteAsync(TId id);
+        Task<T> DeleteAsync(TId id);
 
-        Task DeleteAsync(T t);
+        Task<T> DeleteAsync(T t);
     }
 }

@@ -1,3 +1,4 @@
+using AutoMapper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -11,6 +12,8 @@ using SandwichClub.Api.Dto;
 using SandwichClub.Api.Middleware;
 using SandwichClub.Api.Repositories.Models;
 using Newtonsoft.Json.Serialization;
+using System.Reflection;
+using System.Linq;
 
 namespace SandwichClub.Api
 {
@@ -34,6 +37,9 @@ namespace SandwichClub.Api
             string cs = "Data Source=" + System.IO.Directory.GetCurrentDirectory() + "/database.sqlite";
 
             services.AddDbContext<ScContext>(options => options.UseSqlite(cs).UseMemoryCache(null));
+
+            InitializeAutoMapper();
+            services.AddSingleton<IMapper>(Mapper.Instance);
 
             services.AddTransient<IAuthorisationService, FacebookAuthorisationService>();
             services.AddScoped<IScSession, ScSession>();
@@ -76,6 +82,15 @@ namespace SandwichClub.Api
             app.UseMiddleware<AuthorizationMiddleware>();
 
             app.UseMvc();
+        }
+
+        public static void InitializeAutoMapper()
+        {
+            Mapper.Initialize(cfg => {
+                cfg.CreateMap<Week, Week>();
+                cfg.CreateMap<WeekUserLink, WeekUserLink>();
+                cfg.CreateMap<User, User>();
+            });
         }
     }
 }

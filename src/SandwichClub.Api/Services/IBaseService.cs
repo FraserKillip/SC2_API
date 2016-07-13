@@ -15,8 +15,12 @@ namespace SandwichClub.Api.Services
 
         Task<T> InsertAsync(T t);
 
-        Task UpdateAsync(T t);
+        Task<T> UpdateAsync(T t);
+
+        Task<T> SaveAsync(T t);
 
         Task DeleteAsync(TId id);
+
+        TId GetId(T t);
     }
 }

@@ -1,3 +1,4 @@
+using AutoMapper;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -8,7 +9,7 @@ namespace SandwichClub.Api.Repositories
 {
     public class UserRepository : BaseRepository<int, User>, IUserRepository
     {
-        public UserRepository(ScContext context) : base(context)
+        public UserRepository(ScContext context, IMapper mapper) : base(context, mapper)
         {
         }
 

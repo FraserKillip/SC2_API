@@ -1,13 +1,14 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using SandwichClub.Api.Repositories;
 using SandwichClub.Api.Repositories.Models;
 
 namespace SandwichClub.Api.Services
 {
-    public class WeekUserLinkService : BaseService<WeekUserLinkId, WeekUserLink, IWeekUserLinkRepository>, IWeekUserLinkService
+    public class WeekUserLinkService : SaveOnlyBaseService<WeekUserLinkId, WeekUserLink, IWeekUserLinkRepository>, IWeekUserLinkService
     {
-        public WeekUserLinkService(IWeekUserLinkRepository weekUserLinkRepository) : base(weekUserLinkRepository)
+        public WeekUserLinkService(IWeekUserLinkRepository weekUserLinkRepository, ILogger<WeekUserLinkService> logger) : base(weekUserLinkRepository, logger)
         {
         }
 
@@ -15,34 +16,15 @@ namespace SandwichClub.Api.Services
         {
             return Repository.GetByWeekIdAsync(weekId);
         }
-
-        public override Task<WeekUserLink> InsertAsync(WeekUserLink link)
+        
+        protected override bool SaveShouldDelete(WeekUserLink link)
         {
-            return InsertOrUpdateAsync(link);
+            return link.Paid <= 0 && link.Slices <= 0;
         }
 
-        public override Task UpdateAsync(WeekUserLink link)
+        public override WeekUserLinkId GetId(WeekUserLink link)
         {
-            return InsertOrUpdateAsync(link);
-        }
-
-        public async Task<WeekUserLink> InsertOrUpdateAsync(WeekUserLink link)
-        {
-            var id = new WeekUserLinkId {UserId = link.UserId, WeekId = link.WeekId};
-            var existingLink = await Repository.GetByIdAsync(id);
-            var exists = existingLink != null;
-
-            // Check if we should delete this link
-            var delete = link.Paid <= 0 && link.Slices <= 0;
-
-            if (exists && delete)
-                await Repository.DeleteAsync(id);
-            else if (exists)
-                await Repository.UpdateAsync(link);
-            else if (!delete)
-                link = await Repository.InsertAsync(link);
-
-            return link;
+            return new WeekUserLinkId {WeekId = link.WeekId, UserId = link.UserId};
         }
     }
 }

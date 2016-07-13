@@ -43,8 +43,18 @@ namespace SandwichClub.Api.Tests
 
         public void RegisterInstance<T>(T instance)
         {
-            _services[typeof(T)] = instance;
-            _mockedServices.Remove(typeof(T));
+            RegisterInstance<T>(instance, typeof(T));
+        }
+
+        public void RegisterInstance<T>(T instance, Type asType)
+        {
+            _services[asType] = instance;
+            _mockedServices.Remove(asType);
+        }
+
+        public bool IsRegistered(Type type)
+        {
+            return _services.ContainsKey(type);
         }
     }
 }

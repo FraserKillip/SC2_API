@@ -1,6 +1,6 @@
 namespace SandwichClub.Api.Repositories.Models
 {
-    public class User
+    public class User : IEntity
     {
         public int UserId { get; set; }
         public string FacebookId { get; set; }
@@ -13,5 +13,17 @@ namespace SandwichClub.Api.Repositories.Models
         public string PhoneNumber { get; set; }
         public string BankName { get; set; }
         public bool FirstLogin { get; set; }
+
+        public override bool Equals(object o)
+        {
+            return o != null
+                && GetType() == o.GetType()
+                && UserId == ((User) o).UserId;
+        }
+
+        public override int GetHashCode()
+        {
+            return UserId.GetHashCode();
+        }
     }
 }
