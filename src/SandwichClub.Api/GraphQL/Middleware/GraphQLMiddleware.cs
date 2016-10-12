@@ -7,6 +7,8 @@ using GraphQL;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
+using SandwichClub.Api.GraphQL;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace GraphQL.Middleware
 {
@@ -17,7 +19,7 @@ namespace GraphQL.Middleware
     {
         private readonly string graphqlPath;
         private readonly RequestDelegate next;
-        private readonly ISchema schema;
+        // private readonly ISchema schema;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="GraphQLMiddleware" /> class.
@@ -41,15 +43,11 @@ namespace GraphQL.Middleware
             {
                 throw new ArgumentNullException(nameof(options));
             }
-            if (options.Value?.Schema == null)
-            {
-                throw new ArgumentException("Schema is null");
-            }
 
             this.next = next;
             var optionsValue = options.Value;
             graphqlPath = string.IsNullOrEmpty(optionsValue?.GraphQLPath) ? GraphQLOptions.DefaultGraphQLPath : optionsValue.GraphQLPath;
-            schema = optionsValue?.Schema;
+            // schema = optionsValue?.Schema;
         }
 
         /// <summary>
@@ -71,9 +69,12 @@ namespace GraphQL.Middleware
                 throw new ArgumentNullException(nameof(context));
             }
 
+            var queryObj = context.RequestServices.GetService<ISandwichClubSchema>();
+
+
             if (ShouldRespondToRequest(context.Request))
             {
-                var executionResult = await ExecuteAsync(context.Request).ConfigureAwait(true);
+                var executionResult = await ExecuteAsync(context.Request, new Schema { Query = queryObj }).ConfigureAwait(true);
                 await WriteResponseAsync(context.Response , executionResult).ConfigureAwait(true);
                 return;
             }
@@ -81,7 +82,7 @@ namespace GraphQL.Middleware
             await next(context).ConfigureAwait(true);
         }
 
-        private async Task<ExecutionResult> ExecuteAsync(HttpRequest request)
+        private async Task<ExecutionResult> ExecuteAsync(HttpRequest request, ISchema schema)
         {
             string requestBodyText;
             using (var streamReader = new StreamReader(request.Body))

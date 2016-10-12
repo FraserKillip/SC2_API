@@ -60,6 +60,8 @@ namespace SandwichClub.Api
             services.AddScoped<IWeekUserLinkService, WeekUserLinkService>();
             services.AddScoped<IMapper<WeekUserLink, WeekUserLinkDto>, WeekUserLinkMapper>();
 
+            services.AddSingleton<ISandwichClubSchema, SandwichClubSchema>();
+
             // Configs
             services.Configure<AuthorizationMiddlewareConfig>(Configuration);
             services.AddOptions();
@@ -88,12 +90,11 @@ namespace SandwichClub.Api
             }
 
             app.UseCors(builder => builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
-            // app.UseMiddleware<AuthorizationMiddleware>();
+            app.UseMiddleware<AuthorizationMiddleware>();
 
             app.UseGraphQL(new GraphQLOptions
             {
                 GraphQLPath = "/graphql" ,
-                Schema = new Schema { Query = new SandwichClubSchema() }
             });
 
             app.UseGraphiQL(new GraphiQLOptions()

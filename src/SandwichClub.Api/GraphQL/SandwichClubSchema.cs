@@ -1,13 +1,17 @@
 using GraphQL.Types;
+using SandwichClub.Api.Repositories;
 using SandwichClub.Api.Repositories.Models;
+using SandwichClub.Api.Services;
 
 namespace SandwichClub.Api.GraphQL {
-    public class SandwichClubSchema : ObjectGraphType {
-        public SandwichClubSchema() {
+    public interface ISandwichClubSchema : IObjectGraphType {}
+
+    public class SandwichClubSchema : ObjectGraphType, ISandwichClubSchema {
+        public SandwichClubSchema(IScSession session, IUserRepository userRepository) {
             Name = "Query";
             Field<UserType>(
-                "user",
-                resolve: context => new User { UserId = 1, FirstName = "Test" }
+                "me",
+                resolve: context => userRepository.GetByIdAsync(session.CurrentUser.UserId)
             );
         }
     }
