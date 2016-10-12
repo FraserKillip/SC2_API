@@ -21,6 +21,6 @@ namespace SandwichClub.Api.Repositories.Models
         public override string ToString()
         {
             return WeekId + " - " + ShopperUserId + " - " + Cost;
-        } 
+        }
     }
 }

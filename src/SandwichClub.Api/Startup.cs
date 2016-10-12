@@ -18,6 +18,7 @@ using System.Linq;
 using GraphQL.Middleware;
 using GraphQL.Types;
 using SandwichClub.Api.GraphQL;
+using SandwichClub.Api.GraphQL.Types;
 
 namespace SandwichClub.Api
 {
@@ -60,7 +61,11 @@ namespace SandwichClub.Api
             services.AddScoped<IWeekUserLinkService, WeekUserLinkService>();
             services.AddScoped<IMapper<WeekUserLink, WeekUserLinkDto>, WeekUserLinkMapper>();
 
-            services.AddTransient<ISandwichClubSchema, SandwichClubSchema>();
+            services.AddScoped<UserType>();
+            services.AddScoped<WeekType>();
+            services.AddScoped<WeekUserLinkType>();
+            services.AddScoped<SandwichClubQuery>();
+            services.AddScoped<SandwichClubSchema>((sp) => new SandwichClubSchema(type => (GraphType) sp.GetService(type)));
 
             // Configs
             services.Configure<AuthorizationMiddlewareConfig>(Configuration);
@@ -71,6 +76,7 @@ namespace SandwichClub.Api
             services.AddMvc().AddJsonOptions(options => {
                 options.SerializerSettings.ContractResolver = new DefaultContractResolver();
             });
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

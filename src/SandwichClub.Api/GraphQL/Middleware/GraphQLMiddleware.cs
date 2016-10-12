@@ -69,12 +69,11 @@ namespace GraphQL.Middleware
                 throw new ArgumentNullException(nameof(context));
             }
 
-            var queryObj = context.RequestServices.GetService<ISandwichClubSchema>();
-
+            var schema = context.RequestServices.GetService<SandwichClubSchema>();
 
             if (ShouldRespondToRequest(context.Request))
             {
-                var executionResult = await ExecuteAsync(context.Request, new Schema { Query = queryObj }).ConfigureAwait(true);
+                var executionResult = await ExecuteAsync(context.Request, schema).ConfigureAwait(true);
                 await WriteResponseAsync(context.Response , executionResult).ConfigureAwait(true);
                 return;
             }
