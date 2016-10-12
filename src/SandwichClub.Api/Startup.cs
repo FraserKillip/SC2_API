@@ -2,6 +2,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -14,6 +15,9 @@ using SandwichClub.Api.Repositories.Models;
 using Newtonsoft.Json.Serialization;
 using System.Reflection;
 using System.Linq;
+using GraphQL.Middleware;
+using GraphQL.Types;
+using SandwichClub.Api.GraphQL;
 
 namespace SandwichClub.Api
 {
@@ -78,8 +82,24 @@ namespace SandwichClub.Api
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
 
+            if (env.IsDevelopment())
+            {
+                app.UseDeveloperExceptionPage();
+            }
+
             app.UseCors(builder => builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
-            app.UseMiddleware<AuthorizationMiddleware>();
+            // app.UseMiddleware<AuthorizationMiddleware>();
+
+            app.UseGraphQL(new GraphQLOptions
+            {
+                GraphQLPath = "/graphql" ,
+                Schema = new Schema { Query = new SandwichClubSchema() }
+            });
+
+            app.UseGraphiQL(new GraphiQLOptions()
+            {
+                GraphiQLPath = "/graphiql"
+            });
 
             app.UseMvc();
         }

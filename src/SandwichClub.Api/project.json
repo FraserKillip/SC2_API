@@ -15,7 +15,11 @@
     "Microsoft.Extensions.Logging.Console": "1.0.0",
     "Microsoft.Extensions.Logging.Debug": "1.0.0",
     "Microsoft.Extensions.Options.ConfigurationExtensions": "1.0.0",
-    "AutoMapper": "5.0.2"
+    "Microsoft.AspNetCore.Diagnostics": "1.0.0",
+    "AutoMapper": "5.1.1",
+    "GraphQL":"0.12.3.556",
+    "NETStandard.Library": "1.6.0",
+    "Newtonsoft.Json": "9.0.1"
   },
 
   "tools": {
