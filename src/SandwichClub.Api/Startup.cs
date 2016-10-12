@@ -60,7 +60,7 @@ namespace SandwichClub.Api
             services.AddScoped<IWeekUserLinkService, WeekUserLinkService>();
             services.AddScoped<IMapper<WeekUserLink, WeekUserLinkDto>, WeekUserLinkMapper>();
 
-            services.AddSingleton<ISandwichClubSchema, SandwichClubSchema>();
+            services.AddTransient<ISandwichClubSchema, SandwichClubSchema>();
 
             // Configs
             services.Configure<AuthorizationMiddlewareConfig>(Configuration);
