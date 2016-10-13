@@ -7,5 +7,6 @@ namespace SandwichClub.Api.Repositories
     public interface IWeekUserLinkRepository : IBaseRepository<WeekUserLinkId, WeekUserLink>
     {
         Task<IEnumerable<WeekUserLink>> GetByWeekIdAsync(int weekId);
+        Task<IEnumerable<WeekUserLink>> GetByUserIdAsync(int userId);
     }
 }

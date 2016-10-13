@@ -32,5 +32,10 @@ namespace SandwichClub.Api.Repositories
         {
             return await DbSet.Where(wul => wul.WeekId == weekId).ToListAsync();
         }
+
+        public async Task<IEnumerable<WeekUserLink>> GetByUserIdAsync(int userId)
+        {
+            return await DbSet.Where(wul => wul.UserId == userId).ToListAsync();
+        }
     }
 }

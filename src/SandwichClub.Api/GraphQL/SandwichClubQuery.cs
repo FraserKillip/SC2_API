@@ -11,10 +11,12 @@ namespace SandwichClub.Api.GraphQL {
                 "me",
                 resolve: context => userService.GetByIdAsync(session.CurrentUser.UserId)
             );
+
             Field<ListGraphType<UserType>>(
                 "users",
                 resolve: context => userService.GetAsync()
             );
+
             Field<UserType>(
                 "user",
                 arguments: new QueryArguments(
@@ -33,6 +35,23 @@ namespace SandwichClub.Api.GraphQL {
             Field<WeekType>(
                 "thisweek",
                 resolve: context => weekService.GetCurrentWeekAsync()
+            );
+
+            Field<ListGraphType<WeekType>>(
+                "weeks",
+                resolve: context => weekService.GetAsync()
+            );
+
+            Field<WeekType>(
+                "week",
+                arguments: new QueryArguments(
+                    new QueryArgument<IntGraphType> { Name = "WeekId", Description = "WeekId of the user" }
+                ),
+                resolve: context => {
+                    var weekId = context.GetArgument<int?>("WeekId");
+                    if (weekId != null) return weekService.GetByIdAsync(weekId.Value);
+                    return null;
+                }
             );
         }
     }

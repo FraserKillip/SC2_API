@@ -5,7 +5,7 @@ using SandwichClub.Api.Services;
 namespace SandwichClub.Api.GraphQL.Types {
     public class UserType : ObjectGraphType
     {
-      public UserType()
+      public UserType(IWeekUserLinkService weekUserLinkService)
       {
         Name = "User";
         Field<NonNullGraphType<IntGraphType>>("UserId", "The id of the user.");
@@ -19,6 +19,8 @@ namespace SandwichClub.Api.GraphQL.Types {
         Field<StringGraphType>("PhoneNumber", "The PhoneNumber of the user");
         Field<StringGraphType>("BankName", "The BankName of the user");
         Field<BooleanGraphType>("FirstLogin", "Whether the user is logging in for the first time");
+
+        Field<ListGraphType<WeekUserLinkType>>("Weeks", "The users joined weeks", resolve: context => weekUserLinkService.GetByUserIdAsync(((User) context.Source).UserId));
         IsTypeOf = value => value is User;
       }
     }

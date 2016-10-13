@@ -16,7 +16,12 @@ namespace SandwichClub.Api.Services
         {
             return Repository.GetByWeekIdAsync(weekId);
         }
-        
+
+        public Task<IEnumerable<WeekUserLink>> GetByUserIdAsync(int userId)
+        {
+            return Repository.GetByUserIdAsync(userId);
+        }
+
         protected override bool SaveShouldDelete(WeekUserLink link)
         {
             return link.Paid <= 0 && link.Slices <= 0;
@@ -24,7 +29,7 @@ namespace SandwichClub.Api.Services
 
         public override WeekUserLinkId GetId(WeekUserLink link)
         {
-            return new WeekUserLinkId {WeekId = link.WeekId, UserId = link.UserId};
+            return new WeekUserLinkId { WeekId = link.WeekId, UserId = link.UserId };
         }
     }
 }
