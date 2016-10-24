@@ -9,6 +9,7 @@ using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using SandwichClub.Api.GraphQL;
 using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json.Linq;
 
 namespace GraphQL.Middleware
 {
@@ -88,7 +89,13 @@ namespace GraphQL.Middleware
             {
                 requestBodyText = await streamReader.ReadToEndAsync().ConfigureAwait(true);
             }
-            var graphqlRequest = JsonConvert.DeserializeObject<GraphQLRequest>(requestBodyText);
+            JObject o = JObject.Parse(requestBodyText);
+            var graphqlRequest = new GraphQLRequest {
+                Query = o["query"]?.ToString(),
+                Variables = o["variables"]?.ToString(),
+                Mutation = o["mutation"]?.ToString(),
+                OperationName = o["operationName"]?.ToString()
+            };//JsonConvert.DeserializeObject<GraphQLRequest>(requestBodyText);
             var result = await new DocumentExecuter().ExecuteAsync(schema , null , graphqlRequest.Query , graphqlRequest.OperationName , graphqlRequest.Variables.ToInputs()).ConfigureAwait(true);
             return result;
         }
