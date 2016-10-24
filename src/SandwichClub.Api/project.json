@@ -17,9 +17,9 @@
     "Microsoft.Extensions.Options.ConfigurationExtensions": "1.0.0",
     "Microsoft.AspNetCore.Diagnostics": "1.0.0",
     "AutoMapper": "5.1.1",
-    "GraphQL":"0.12.3.556",
+    "GraphQL":"0.13.0.562",
     "NETStandard.Library": "1.6.0",
-    "Newtonsoft.Json": "9.0.1"
+    "Newtonsoft.Json": "9.0.2-beta1"
   },
 
   "tools": {
