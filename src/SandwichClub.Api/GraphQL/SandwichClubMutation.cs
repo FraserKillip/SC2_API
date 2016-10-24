@@ -9,7 +9,7 @@ namespace SandwichClub.Api.GraphQL {
 
             Name = "Mutation";
             Field<WeekUserLinkType>(
-                "subscibeToWeek",
+                "subscribeToWeek",
                 arguments: new QueryArguments(
                     new QueryArgument<IntGraphType> { Name = "userId", Description = "UserId of the user" },
                     new QueryArgument<IntGraphType> { Name = "weekId", Description = "WeekId of the week" },

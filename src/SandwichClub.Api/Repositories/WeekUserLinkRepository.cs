@@ -17,7 +17,7 @@ namespace SandwichClub.Api.Repositories
         {
             if (id.UserId == 0 || id.WeekId == 0)
                 return null;
-            return await DbSet.FirstOrDefaultAsync(wul => wul.UserId == id.UserId && wul.WeekId == id.UserId);
+            return await DbSet.FirstOrDefaultAsync(wul => wul.UserId == id.UserId && wul.WeekId == id.WeekId);
         }
 
         public override async Task<IEnumerable<WeekUserLink>> GetByIdsAsync(IEnumerable<WeekUserLinkId> ids)
