@@ -45,6 +45,13 @@ namespace SandwichClub.Api.Middleware
 
             var token = context.Request.Headers.Keys.Contains("Sandwich-Auth-Token") ? context.Request.Headers["Sandwich-Auth-Token"] : context.Request.Headers["sandwich-auth-token"];
 
+            if (token == "graphql") {
+                var userService = context.RequestServices.GetService<IUserService>();
+                session.CurrentUser = (await userService.GetAsync()).FirstOrDefault();
+                await _next(context);
+                return;
+            }
+
             UserAuthItem authItem;
             if (_tokenCache.TryGetValue(token, out authItem))
             {
