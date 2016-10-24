@@ -31,5 +31,16 @@ namespace SandwichClub.Api.Services
         {
             return new WeekUserLinkId { WeekId = link.WeekId, UserId = link.UserId };
         }
+
+        public async Task<WeekUserLink> UpdateOrInsertAsync(WeekUserLink link) {
+            var existing = await Repository.GetByIdAsync(GetId(link));
+
+            if (existing != null) {
+                existing.Slices = link.Slices;
+                return await Repository.UpdateAsync(existing);
+            }
+
+            return await Repository.InsertAsync(link);
+        }
     }
 }
