@@ -36,14 +36,14 @@ namespace SandwichClub.Api.Middleware
                 return;
             }
 
-            if (!context.Request.Headers.Keys.Contains("Sandwich-Auth-Token"))
+            if (!context.Request.Headers.Keys.Contains("Sandwich-Auth-Token") && !context.Request.Headers.Keys.Contains("sandwich-auth-token"))
             {
                 context.Response.StatusCode = (int) HttpStatusCode.Unauthorized;
                 await context.Response.WriteAsync("Missing Sandwich-Auth-Token header");
                 return;
             }
 
-            var token = context.Request.Headers["Sandwich-Auth-Token"];
+            var token = context.Request.Headers.Keys.Contains("Sandwich-Auth-Token") ? context.Request.Headers["Sandwich-Auth-Token"] : context.Request.Headers["sandwich-auth-token"];
 
             UserAuthItem authItem;
             if (_tokenCache.TryGetValue(token, out authItem))

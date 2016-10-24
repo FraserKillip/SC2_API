@@ -9,6 +9,7 @@ namespace SandwichClub.Api.GraphQL
             : base(resolveType)
         {
             Query = (SandwichClubQuery)resolveType(typeof (SandwichClubQuery));
+            Mutation = (SandwichClubMutation)resolveType(typeof (SandwichClubMutation));
         }
     }
 }

@@ -7,12 +7,12 @@ namespace SandwichClub.Api.GraphQL.Types {
     {
       public WeekType(IWeekUserLinkService weekUserLinkService)
       {
-        Name = "Week";
-        Field<NonNullGraphType<IntGraphType>>("WeekId", "The weeks id");
-        Field<IntGraphType>("ShopperUserId", "THe weeks shopper");
-        Field<DecimalGraphType>("Cost", "The Cost of the week");
+        Name = "week";
+        Field<NonNullGraphType<IntGraphType>>("weekId", "The weeks id");
+        Field<IntGraphType>("shopperUserId", "THe weeks shopper");
+        Field<DecimalGraphType>("cost", "The Cost of the week");
 
-        Field<ListGraphType<WeekUserLinkType>>("Users", resolve: context =>  weekUserLinkService.GetByWeekIdAsync(((Week) context.Source).WeekId));
+        Field<ListGraphType<WeekUserLinkType>>("users", resolve: context =>  weekUserLinkService.GetByWeekIdAsync(((Week) context.Source).WeekId));
 
         IsTypeOf = value => value is Week;
       }

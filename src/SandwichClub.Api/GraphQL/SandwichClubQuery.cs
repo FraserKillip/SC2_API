@@ -20,13 +20,13 @@ namespace SandwichClub.Api.GraphQL {
             Field<UserType>(
                 "user",
                 arguments: new QueryArguments(
-                    new QueryArgument<IntGraphType> { Name = "UserId", Description = "UserId of the user" },
-                    new QueryArgument<StringGraphType> { Name = "FacebookId", Description = "FacebookId of the user" }
+                    new QueryArgument<IntGraphType> { Name = "userId", Description = "UserId of the user" },
+                    new QueryArgument<StringGraphType> { Name = "facebookId", Description = "FacebookId of the user" }
                 ),
                 resolve: context => {
-                    var userId = context.GetArgument<int?>("UserId");
+                    var userId = context.GetArgument<int?>("userId");
                     if (userId != null) return userService.GetByIdAsync(userId.Value);
-                    var socialId = context.GetArgument<string>("FacebookId");
+                    var socialId = context.GetArgument<string>("facebookId");
                     if (socialId != null) return userService.GetBySocialId(socialId);
                     return null;
                 }
@@ -45,10 +45,10 @@ namespace SandwichClub.Api.GraphQL {
             Field<WeekType>(
                 "week",
                 arguments: new QueryArguments(
-                    new QueryArgument<IntGraphType> { Name = "WeekId", Description = "WeekId of the user" }
+                    new QueryArgument<IntGraphType> { Name = "weekId", Description = "WeekId of the user" }
                 ),
                 resolve: context => {
-                    var weekId = context.GetArgument<int?>("WeekId");
+                    var weekId = context.GetArgument<int?>("weekId");
                     if (weekId != null) return weekService.GetByIdAsync(weekId.Value);
                     return null;
                 }

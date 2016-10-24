@@ -65,6 +65,7 @@ namespace SandwichClub.Api
             services.AddScoped<WeekType>();
             services.AddScoped<WeekUserLinkType>();
             services.AddScoped<SandwichClubQuery>();
+            services.AddScoped<SandwichClubMutation>();
             services.AddScoped<SandwichClubSchema>((sp) => new SandwichClubSchema(type => (GraphType) sp.GetService(type)));
 
             // Configs
