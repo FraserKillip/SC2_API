@@ -29,6 +29,8 @@ namespace SandwichClub.Api.Services
 
             if (fbuser == null) return null;
 
+            if (fbuser.error != null) return null;
+
             var user = await _userRepository.GetBySocialId(fbuser.id) ?? new User();
 
             user.FacebookId = fbuser.id;
@@ -59,6 +61,7 @@ namespace SandwichClub.Api.Services
             public int timezone { get; set; }
             public FacebookUserPictureDto picture { get; set; }
             public string id { get; set; }
+            public FacebookErrorDto error { get; set; }
             // ReSharper restore InconsistentNaming
         }
 
@@ -71,6 +74,14 @@ namespace SandwichClub.Api.Services
         {
             public bool is_silhouette { get; set; }
             public string url { get; set; }
+        }
+
+        private class FacebookErrorDto
+        {
+            public string message { get; set; }
+            public string type { get; set; }
+            public int code { get; set; }
+            public int error_subcode { get; set; }
         }
     }
 }

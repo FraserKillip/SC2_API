@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using SandwichClub.Api.Repositories;
@@ -17,9 +18,14 @@ namespace SandwichClub.Api.Services
             return Repository.GetByWeekIdAsync(weekId);
         }
 
-        public Task<IEnumerable<WeekUserLink>> GetByUserIdAsync(int userId)
+        public async Task<IEnumerable<WeekUserLink>> GetByUserIdAsync(int userId, bool unpaidOnly = false)
         {
-            return Repository.GetByUserIdAsync(userId);
+            var task = Repository.GetByUserIdAsync(userId);
+            if (unpaidOnly) {
+                var data = await task;
+                return data.Where(w => w.Paid == 0);
+            }
+            return await task;
         }
 
         protected override bool SaveShouldDelete(WeekUserLink link)

@@ -7,7 +7,7 @@ namespace SandwichClub.Api.Services
     public interface IWeekUserLinkService : IBaseService<WeekUserLinkId, WeekUserLink>
     {
         Task<IEnumerable<WeekUserLink>> GetByWeekIdAsync(int weekId);
-        Task<IEnumerable<WeekUserLink>> GetByUserIdAsync(int userId);
+        Task<IEnumerable<WeekUserLink>> GetByUserIdAsync(int userId, bool unpaidOnly = false);
         Task<WeekUserLink> UpdateOrInsertAsync(WeekUserLink link);
     }
 }

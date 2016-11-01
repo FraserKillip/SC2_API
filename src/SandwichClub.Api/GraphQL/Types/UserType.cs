@@ -20,7 +20,17 @@ namespace SandwichClub.Api.GraphQL.Types {
         Field<StringGraphType>("bankName", "The BankName of the user");
         Field<BooleanGraphType>("firstLogin", "Whether the user is logging in for the first time");
 
-        Field<ListGraphType<WeekUserLinkType>>("weeks", "The users joined weeks", resolve: context => weekUserLinkService.GetByUserIdAsync(((User) context.Source).UserId));
+        Field<ListGraphType<WeekUserLinkType>>("weeks", "The users joined weeks",
+          arguments: new QueryArguments(
+              new QueryArgument<BooleanGraphType> { Name = "unpaidOnly", Description = "Include only unpaid weeks" }
+          ),
+          resolve: context => {
+            var unpaidOnly = context.GetArgument<bool?>("unpaidOnly");
+            if (unpaidOnly.HasValue && unpaidOnly.Value) {
+              return weekUserLinkService.GetByUserIdAsync(((User) context.Source).UserId, true);
+            }
+            return weekUserLinkService.GetByUserIdAsync(((User) context.Source).UserId);
+          });
         IsTypeOf = value => value is User;
       }
     }
