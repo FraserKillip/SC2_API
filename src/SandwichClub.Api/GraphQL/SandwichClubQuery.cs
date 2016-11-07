@@ -15,6 +15,7 @@ namespace SandwichClub.Api.GraphQL {
                         return userService.GetByIdAsync(session.CurrentUser.UserId);
                     } catch (Exception e) {
                         Console.WriteLine(e.ToString());
+                        Console.WriteLine(e.StackTrace);
                     }
 
                     return null;
