@@ -19,6 +19,7 @@ using GraphQL.Middleware;
 using GraphQL.Types;
 using SandwichClub.Api.GraphQL;
 using SandwichClub.Api.GraphQL.Types;
+using System;
 
 namespace SandwichClub.Api
 {
@@ -45,6 +46,8 @@ namespace SandwichClub.Api
             } else {
                 cs = "Data Source=" + System.IO.Directory.GetCurrentDirectory() + "/database.sqlite";
             }
+
+            Console.WriteLine(cs);
 
             services.AddDbContext<ScContext>(options => options.UseSqlite(cs).UseMemoryCache(null));
 
