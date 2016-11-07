@@ -5,7 +5,7 @@ using SandwichClub.Api.Services;
 namespace SandwichClub.Api.GraphQL.Types {
     public class WeekType : ObjectGraphType
     {
-      public WeekType(IWeekUserLinkService weekUserLinkService)
+      public WeekType(IWeekUserLinkService weekUserLinkService, IUserService userService)
       {
         Name = "week";
         Field<NonNullGraphType<IntGraphType>>("weekId", "The weeks id");
@@ -13,6 +13,7 @@ namespace SandwichClub.Api.GraphQL.Types {
         Field<DecimalGraphType>("cost", "The Cost of the week");
 
         Field<ListGraphType<WeekUserLinkType>>("users", resolve: context =>  weekUserLinkService.GetByWeekIdAsync(((Week) context.Source).WeekId));
+        Field<UserType>("shopper", resolve: context =>  ((Week) context.Source).ShopperUserId.HasValue ? userService.GetByIdAsync(((Week) context.Source).ShopperUserId.Value) : null);
 
         IsTypeOf = value => value is Week;
       }
