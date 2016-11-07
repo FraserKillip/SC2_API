@@ -5,7 +5,7 @@ using SandwichClub.Api.Services;
 
 namespace SandwichClub.Api.GraphQL {
     public class SandwichClubMutation : ObjectGraphType {
-        public SandwichClubMutation(IScSession session, IWeekUserLinkService weekUserLinkService) {
+        public SandwichClubMutation(IScSession session, IWeekUserLinkService weekUserLinkService, IWeekService weekService) {
 
             Name = "Mutation";
             Field<WeekUserLinkType>(
@@ -21,6 +21,22 @@ namespace SandwichClub.Api.GraphQL {
                     var slices = context.GetArgument<int>("slices");
 
                     return weekUserLinkService.UpdateOrInsertAsync(new WeekUserLink { Slices = slices, WeekId = weekId, UserId = userId});
+                }
+            );
+
+            Field<WeekType>(
+                "updateWeek",
+                arguments: new QueryArguments(
+                    new QueryArgument<IntGraphType> { Name = "weekId", Description = "WeekId of the week" },
+                    new QueryArgument<IntGraphType> { Name = "shopperId", Description = "UserId of the shopper" },
+                    new QueryArgument<DecimalGraphType> { Name = "cost", Description = "cost of the week" }
+                ),
+                resolve: (context) => {
+                    var shopperId = context.GetArgument<int?>("shopperId");
+                    var weekId = context.GetArgument<int>("weekId");
+                    var cost = context.GetArgument<float?>("cost");
+
+                    return weekService.UpdateWeek(weekId, shopperId, cost);
                 }
             );
         }
