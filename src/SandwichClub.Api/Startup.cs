@@ -39,7 +39,12 @@ namespace SandwichClub.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            string cs = "Data Source=" + System.IO.Directory.GetCurrentDirectory() + "/database.sqlite";
+            string cs;
+            if (Configuration.GetConnectionString("Database") != null) {
+                cs = Configuration.GetConnectionString("Database");
+            } else {
+                cs = "Data Source=" + System.IO.Directory.GetCurrentDirectory() + "/database.sqlite";
+            }
 
             services.AddDbContext<ScContext>(options => options.UseSqlite(cs).UseMemoryCache(null));
 
