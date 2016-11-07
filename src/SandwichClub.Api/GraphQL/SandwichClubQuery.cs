@@ -1,3 +1,4 @@
+using System;
 using GraphQL.Types;
 using SandwichClub.Api.GraphQL.Types;
 using SandwichClub.Api.Services;
@@ -9,7 +10,15 @@ namespace SandwichClub.Api.GraphQL {
             Name = "Query";
             Field<UserType>(
                 "me",
-                resolve: context => userService.GetByIdAsync(session.CurrentUser.UserId)
+                resolve: context => {
+                    try {
+                        return userService.GetByIdAsync(session.CurrentUser.UserId);
+                    } catch (Exception e) {
+                        Console.WriteLine(e.ToString());
+                    }
+
+                    return null;
+                }
             );
 
             Field<ListGraphType<UserType>>(
