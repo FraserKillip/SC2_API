@@ -29,7 +29,7 @@ namespace SandwichClub.Api.GraphQL {
                 arguments: new QueryArguments(
                     new QueryArgument<IntGraphType> { Name = "weekId", Description = "WeekId of the week" },
                     new QueryArgument<IntGraphType> { Name = "shopperId", Description = "UserId of the shopper" },
-                    new QueryArgument<DecimalGraphType> { Name = "cost", Description = "cost of the week" }
+                    new QueryArgument<FloatGraphType> { Name = "cost", Description = "cost of the week" }
                 ),
                 resolve: (context) => {
                     var shopperId = context.GetArgument<int?>("shopperId");
