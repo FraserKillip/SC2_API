@@ -12,6 +12,12 @@ namespace SandwichClub.Api.GraphQL {
                 "me",
                 resolve: context => {
                     try {
+                        Console.WriteLine("Session");
+                        Console.WriteLine(session.CurrentUser);
+                        Console.WriteLine("userService");
+                        Console.WriteLine(userService);
+                        Console.WriteLine("weekService");
+                        Console.WriteLine(weekService);
                         return userService.GetByIdAsync(session.CurrentUser.UserId);
                     } catch (Exception e) {
                         Console.WriteLine(e.ToString());

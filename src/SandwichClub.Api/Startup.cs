@@ -27,6 +27,8 @@ namespace SandwichClub.Api
     {
         public Startup(IHostingEnvironment env)
         {
+            Console.WriteLine("Env content root path");
+            Console.WriteLine(env.ContentRootPath);
             var builder = new ConfigurationBuilder()
                 .SetBasePath(env.ContentRootPath)
                 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
