@@ -65,7 +65,7 @@ namespace SandwichClub.Api.Services
                 week.Cost = cost.Value;
             }
 
-            return week;
+            return await Repository.UpdateAsync(week);
         }
     }
 }
