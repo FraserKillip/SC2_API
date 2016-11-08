@@ -20,6 +20,7 @@ using GraphQL.Types;
 using SandwichClub.Api.GraphQL;
 using SandwichClub.Api.GraphQL.Types;
 using System;
+using System.IO;
 
 namespace SandwichClub.Api
 {
@@ -34,6 +35,8 @@ namespace SandwichClub.Api
                 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
                 .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
                 .AddEnvironmentVariables();
+            Console.WriteLine($"appsettings.{env.EnvironmentName}.json");
+            Console.WriteLine(File.ReadAllText($"{env.ContentRootPath}appsettings.{env.EnvironmentName}.json"));
             Configuration = builder.Build();
         }
 
