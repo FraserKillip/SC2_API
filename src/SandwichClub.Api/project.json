@@ -1,9 +1,9 @@
 {
   "version": "1.0.0-*",
   "dependencies": {
-    "Microsoft.AspNetCore.Mvc": "1.0.1",
+    "Microsoft.AspNetCore.Mvc": "1.1.0-preview1-final",
     "Microsoft.AspNetCore.Server.IISIntegration": "1.1.0-preview1-final",
-    "Microsoft.AspNetCore.Server.Kestrel": "1.0.1",
+    "Microsoft.AspNetCore.Server.Kestrel": "1.1.0-preview1-final",
     "Microsoft.Data.Sqlite": "1.1.0-preview1-final",
     "Microsoft.EntityFrameworkCore": "1.1.0-preview1-final",
     "Microsoft.EntityFrameworkCore.Sqlite": "1.1.0-preview1-final",
