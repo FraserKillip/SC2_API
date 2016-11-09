@@ -20,7 +20,7 @@ namespace SandwichClub.Api.GraphQL {
                     var weekId = context.GetArgument<int>("weekId");
                     var slices = context.GetArgument<int>("slices");
 
-                    return weekUserLinkService.UpdateOrInsertAsync(new WeekUserLink { Slices = slices, WeekId = weekId, UserId = userId});
+                    return weekUserLinkService.SaveAsync(new WeekUserLink { Slices = slices, WeekId = weekId, UserId = userId});
                 }
             );
 
@@ -36,7 +36,12 @@ namespace SandwichClub.Api.GraphQL {
                     var weekId = context.GetArgument<int>("weekId");
                     var cost = context.GetArgument<float?>("cost");
 
-                    return weekService.UpdateWeek(weekId, shopperId, cost);
+                    return weekService.SaveAsync(new Week
+                    {
+                        WeekId = weekId,
+                        ShopperUserId = shopperId,
+                        Cost = cost ?? 0,
+                    });
                 }
             );
         }

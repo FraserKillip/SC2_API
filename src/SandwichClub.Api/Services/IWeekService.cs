@@ -15,7 +15,5 @@ namespace SandwichClub.Api.Services
         /// Gets the id of a week for the given date
         /// </summary>
         int GetWeekId(DateTime date);
-
-        Task<Week> UpdateWeek(int weekId, int? shopperId, float? cost);
     }
 }

@@ -51,21 +51,5 @@ namespace SandwichClub.Api.Services
             var timespan = date.Subtract(new DateTime(1970, 1, 7));
             return 1 + (int) timespan.TotalDays / 7;
         }
-
-        public async Task<Week> UpdateWeek(int weekId, int? shopperId, float? cost) {
-            var week = await GetByIdAsync(weekId);
-
-            if (shopperId.HasValue)
-            {
-                week.ShopperUserId = shopperId.Value;
-            }
-
-            if (cost.HasValue)
-            {
-                week.Cost = cost.Value;
-            }
-
-            return await SaveAsync(week);
-        }
     }
 }

@@ -8,6 +8,5 @@ namespace SandwichClub.Api.Services
     {
         Task<IEnumerable<WeekUserLink>> GetByWeekIdAsync(int weekId);
         Task<IEnumerable<WeekUserLink>> GetByUserIdAsync(int userId, bool unpaidOnly = false);
-        Task<WeekUserLink> UpdateOrInsertAsync(WeekUserLink link);
     }
 }

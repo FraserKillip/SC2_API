@@ -11,22 +11,7 @@ namespace SandwichClub.Api.GraphQL {
             Field<UserType>(
                 "me",
                 resolve: context => {
-                    try {
-                        Console.WriteLine("Session");
-                        Console.WriteLine(session == null);
-                        Console.WriteLine("Session Current user");
-                        Console.WriteLine(session.CurrentUser == null);
-                        Console.WriteLine("userService");
-                        Console.WriteLine(userService == null);
-                        Console.WriteLine("weekService");
-                        Console.WriteLine(weekService == null);
-                        return userService.GetByIdAsync(session.CurrentUser.UserId);
-                    } catch (Exception e) {
-                        Console.WriteLine(e.ToString());
-                        Console.WriteLine(e.StackTrace);
-                    }
-
-                    return null;
+                    return userService.GetByIdAsync((session.CurrentUser?.UserId).Value);
                 }
             );
 
