@@ -12,6 +12,13 @@ namespace SandwichClub.Api.Repositories
         public UserRepository(ScContext context, IMapper mapper) : base(context, mapper)
         {
         }
+
+        public override async Task<User> GetByIdAsync(int id)
+        {
+            if (id == 0)
+                return null;
+            return await DbSet.FirstOrDefaultAsync(u => u.UserId == id);
+        }
         
         public override async Task<IEnumerable<User>> GetByIdsAsync(IEnumerable<int> ids)
         {

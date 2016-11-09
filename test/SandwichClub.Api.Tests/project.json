@@ -5,15 +5,15 @@
     "xunit": "2.2.0-*",
     "dotnet-test-xunit": "2.2.0-*",
     "SandwichClub.Api": "1.0.0-*",
-    "Castle.Core": "4.0.0-beta002",
-    "Moq": "4.6.38-*",
-    "System.Diagnostics.TraceSource": "4.3.0-preview1-24530-04",
-    "Microsoft.EntityFrameworkCore.InMemory": "1.1.0-preview1-final",
-    "Microsoft.DotNet.InternalAbstractions": "1.0.0",
-    "System.Runtime.InteropServices": "4.1.0"
+    "Castle.Core": "4.0.0-alpha001",
+    "Moq": "4.6.25-*",
+    "System.Diagnostics.TraceSource": "4.0.0",
+    "Microsoft.EntityFrameworkCore.InMemory": "1.0.1",
+    "Microsoft.Extensions.DependencyInjection": "1.0.0",
+    "Microsoft.Extensions.DependencyInjection.Abstractions": "1.0.0"
   },
   "frameworks": {
-    "netcoreapp1.6": {
+    "netcoreapp1.0": {
       "dependencies": {
         "Microsoft.NETCore.App": {
           "version": "1.0.0-*",

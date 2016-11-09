@@ -13,6 +13,13 @@ namespace SandwichClub.Api.Repositories
         {
         }
 
+        public override async Task<Week> GetByIdAsync(int id)
+        {
+            if (id == 0)
+                return null;
+            return await DbSet.FirstOrDefaultAsync(w => w.WeekId == id);
+        }
+
         public override async Task<IEnumerable<Week>> GetByIdsAsync(IEnumerable<int> ids)
         {
             return await DbSet.Where(w => ids.Contains(w.WeekId)).ToListAsync();
