@@ -13,12 +13,8 @@ namespace SandwichClub.Api.Repositories
         {
         }
 
-        public override async Task<WeekUserLink> GetByIdAsync(WeekUserLinkId id)
-        {
-            if (id.UserId == 0 || id.WeekId == 0)
-                return null;
-            return await DbSet.FirstOrDefaultAsync(wul => wul.UserId == id.UserId && wul.WeekId == id.WeekId);
-        }
+        public override object[] GetKeys(WeekUserLinkId id)
+            => new object[] { id.WeekId, id.UserId };
 
         public override async Task<IEnumerable<WeekUserLink>> GetByIdsAsync(IEnumerable<WeekUserLinkId> ids)
         {

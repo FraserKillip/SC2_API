@@ -4,10 +4,18 @@ using System.Threading.Tasks;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using System.Reflection;
+using System.Collections.Concurrent;
+using System;
 
 namespace SandwichClub.Api.Repositories
 {
-    public abstract class BaseRepository<TId, T> : IBaseRepository<TId, T> where T : class
+    public class BaseRepository
+    {
+        protected static ConcurrentDictionary<Type, object> DefaultValues = new ConcurrentDictionary<Type, object>();
+    }
+
+    public abstract class BaseRepository<TId, T> : BaseRepository, IBaseRepository<TId, T> where T : class
     {
         protected readonly ScContext Context;
         protected readonly DbSet<T> DbSet;
@@ -20,9 +28,38 @@ namespace SandwichClub.Api.Repositories
             Mapper = mapper;
         }
 
-        public abstract Task<T> GetByIdAsync(TId id);
+        public virtual object[] GetKeys(TId id)
+            => new object[] { id };
 
-        public abstract Task<IEnumerable<T>>  GetByIdsAsync(IEnumerable<TId> ids);
+        public async virtual Task<T> GetByIdAsync(TId id)
+        {
+            // Check if the id is a default value
+            if (Equals(id, default(TId)))
+                return null;
+            
+            var keys = GetKeys(id);
+            // Check all keys are not defaults
+            foreach (var key in keys)
+            {
+                if (key == null)
+                    return null;
+                if (DefaultValues.GetOrAdd(key.GetType(), t => t.GetTypeInfo().IsValueType ? Activator.CreateInstance(t) : null) == key)
+                    return null;
+            }
+
+            // Find the item
+            return await DbSet.FindAsync(keys);
+        }
+
+        public async virtual Task<IEnumerable<T>> GetByIdsAsync(IEnumerable<TId> ids)
+        {
+            var items = new List<Task<T>>();
+
+            foreach (var id in ids)
+                items.Add(GetByIdAsync(id));
+
+            return (await Task.WhenAll(items)).Where(e => e != null);
+        }
 
         protected EntityEntry<T> Entry(T t)
         {
@@ -58,7 +95,8 @@ namespace SandwichClub.Api.Repositories
             var entry = Entry(t);
             if (entry.State == EntityState.Deleted)
                 throw new DatabaseException("Can't update entity which is deleted");
-            entry.State = EntityState.Modified;
+            if (entry.State != EntityState.Added)
+                entry.State = EntityState.Modified;
             await Context.SaveChangesAsync();
             return entry.Entity;
         }
