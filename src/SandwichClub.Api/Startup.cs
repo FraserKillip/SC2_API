@@ -28,15 +28,14 @@ namespace SandwichClub.Api
     {
         public Startup(IHostingEnvironment env)
         {
-            Console.WriteLine("Env content root path");
-            Console.WriteLine(env.ContentRootPath);
+            Console.WriteLine($"Running in {env.EnvironmentName} mode");
+
             var builder = new ConfigurationBuilder()
                 .SetBasePath(env.ContentRootPath)
                 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
                 .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
                 .AddEnvironmentVariables();
-            Console.WriteLine($"appsettings.{env.EnvironmentName}.json");
-            Console.WriteLine(File.ReadAllText($"{env.ContentRootPath}/appsettings.{env.EnvironmentName}.json"));
+            
             Configuration = builder.Build();
         }
 
@@ -45,14 +44,9 @@ namespace SandwichClub.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            string cs;
-            if (Configuration.GetConnectionString("Database") != null) {
-                cs = Configuration.GetConnectionString("Database");
-            } else {
-                cs = "Data Source=" + System.IO.Directory.GetCurrentDirectory() + "/database.sqlite";
-            }
-
-            Console.WriteLine(cs);
+            string cs = Configuration.GetConnectionString("Database")
+                ?? "Data Source=" + System.IO.Directory.GetCurrentDirectory() + "/database.sqlite";
+            Console.WriteLine($"Using db: {cs}");
 
             services.AddDbContext<ScContext>(options => options.UseSqlite(cs).UseMemoryCache(null));
 
