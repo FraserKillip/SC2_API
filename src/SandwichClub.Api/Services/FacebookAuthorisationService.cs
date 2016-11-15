@@ -31,20 +31,25 @@ namespace SandwichClub.Api.Services
 
             if (fbuser.error != null) return null;
 
-            var user = await _userRepository.GetBySocialId(fbuser.id) ?? new User();
+            using (var transaction = await _userRepository.BeginTransactionAsync())
+            {
+                var user = await _userRepository.GetBySocialId(fbuser.id) ?? new User();
 
-            user.FacebookId = fbuser.id;
-            user.FirstName = fbuser.first_name;
-            user.LastName = fbuser.last_name;
-            user.Email = fbuser.email ?? "";
-            user.AvatarUrl = fbuser.picture.data.url;
+                user.FacebookId = fbuser.id;
+                user.FirstName = fbuser.first_name;
+                user.LastName = fbuser.last_name;
+                user.Email = fbuser.email ?? "";
+                user.AvatarUrl = fbuser.picture.data.url;
 
-            if (user.UserId == 0)
-                await _userRepository.InsertAsync(user);
-            else
-                await _userRepository.UpdateAsync(user);
+                if (user.UserId == 0)
+                    await _userRepository.InsertAsync(user);
+                else
+                    await _userRepository.UpdateAsync(user);
 
-            return user;
+                transaction.Commit();
+
+                return user;
+            }
         }
 
         public Task<bool> CanAuthorise(string token)

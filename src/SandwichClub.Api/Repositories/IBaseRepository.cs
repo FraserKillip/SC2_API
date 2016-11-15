@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace SandwichClub.Api.Repositories
 {
@@ -20,5 +21,7 @@ namespace SandwichClub.Api.Repositories
         Task<T> DeleteAsync(TId id);
 
         Task<T> DeleteAsync(T t);
+
+        Task<IDbContextTransaction> BeginTransactionAsync();
     }
 }

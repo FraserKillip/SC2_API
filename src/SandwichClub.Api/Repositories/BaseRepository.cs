@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore.ChangeTracking;
 using System.Reflection;
 using System.Collections.Concurrent;
 using System;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace SandwichClub.Api.Repositories
 {
@@ -115,6 +116,11 @@ namespace SandwichClub.Api.Repositories
             entry.State = EntityState.Deleted;
             await Context.SaveChangesAsync();
             return entry.Entity;
+        }
+
+        public async Task<IDbContextTransaction> BeginTransactionAsync()
+        {
+            return await Context.Database.BeginTransactionAsync();
         }
     }
 }
