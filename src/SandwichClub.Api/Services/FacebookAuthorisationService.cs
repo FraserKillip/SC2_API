@@ -11,7 +11,7 @@ namespace SandwichClub.Api.Services
 {
     public class FacebookAuthorisationService : IAuthorisationService
     {
-        private static ConcurrentDictionary<string, Lazy<ReaderWriterLockSlim>> LookupLocks = new ConcurrentDictionary<string, Lazy<ReaderWriterLockSlim>>(); 
+        private static ConcurrentDictionary<string, Lazy<SemaphoreSlim>> LookupLocks = new ConcurrentDictionary<string, Lazy<SemaphoreSlim>>(); 
 
         private const string FacebookTokenPrefix = "facebook ";
         private readonly IUserRepository _userRepository;
@@ -36,9 +36,9 @@ namespace SandwichClub.Api.Services
 
             if (fbuser.error != null) return null;
 
-            var lookupLock = LookupLocks.GetOrAdd(fbuser.id, new Lazy<ReaderWriterLockSlim>(() => new ReaderWriterLockSlim())).Value;
+            var lookupLock = LookupLocks.GetOrAdd(fbuser.id, new Lazy<SemaphoreSlim>(() => new SemaphoreSlim(1))).Value;
 
-            lookupLock.EnterWriteLock();
+            await lookupLock.WaitAsync();
 
             try
             {
@@ -59,7 +59,7 @@ namespace SandwichClub.Api.Services
             }
             finally
             {
-                lookupLock.ExitWriteLock();
+                lookupLock.Release();
             }
         }
 
