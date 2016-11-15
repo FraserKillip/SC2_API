@@ -15,5 +15,7 @@ namespace SandwichClub.Api.Services
         /// Gets the id of a week for the given date
         /// </summary>
         int GetWeekId(DateTime date);
+
+        Task<Week> SubscibeToWeek(int weekId, int userId, int slices);
     }
 }

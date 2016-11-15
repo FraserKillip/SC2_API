@@ -8,7 +8,7 @@ namespace SandwichClub.Api.GraphQL {
         public SandwichClubMutation(IScSession session, IWeekUserLinkService weekUserLinkService, IWeekService weekService) {
 
             Name = "Mutation";
-            Field<WeekUserLinkType>(
+            Field<WeekType>(
                 "subscribeToWeek",
                 arguments: new QueryArguments(
                     new QueryArgument<IntGraphType> { Name = "userId", Description = "UserId of the user" },
@@ -20,7 +20,7 @@ namespace SandwichClub.Api.GraphQL {
                     var weekId = context.GetArgument<int>("weekId");
                     var slices = context.GetArgument<int>("slices");
 
-                    return weekUserLinkService.SaveAsync(new WeekUserLink { Slices = slices, WeekId = weekId, UserId = userId});
+                    return weekService.SubscibeToWeek(weekId, userId, slices);
                 }
             );
 

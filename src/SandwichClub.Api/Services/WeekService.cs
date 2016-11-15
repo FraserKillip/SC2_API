@@ -8,7 +8,8 @@ namespace SandwichClub.Api.Services
 {
     public class WeekService : SaveOnlyBaseService<int, Week, IWeekRepository>, IWeekService
     {
-        public WeekService(IWeekRepository weekRepository, ILogger<WeekService> logger) : base(weekRepository, logger)
+        private readonly IWeekUserLinkService _weekUserLinkServer;
+        public WeekService(IWeekRepository weekRepository, ILogger<WeekService> logger, IWeekUserLinkService weekUserLinkService) : base(weekRepository, logger)
         {
         }
 
@@ -50,6 +51,13 @@ namespace SandwichClub.Api.Services
             // Subtract Monday 5th of January 1970
             var timespan = date.Subtract(new DateTime(1970, 1, 7));
             return 1 + (int) timespan.TotalDays / 7;
+        }
+
+        public async Task<Week> SubscibeToWeek(int weekId, int userId, int slices)
+        {
+            var link = await _weekUserLinkServer.SaveAsync(new WeekUserLink { Slices = slices, WeekId = weekId, UserId = userId});
+
+            return await GetByIdAsync(weekId);
         }
     }
 }
