@@ -1,4 +1,7 @@
-﻿using System.Net.Http;
+﻿using System;
+using System.Collections.Concurrent;
+using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using SandwichClub.Api.Repositories;
@@ -8,6 +11,8 @@ namespace SandwichClub.Api.Services
 {
     public class FacebookAuthorisationService : IAuthorisationService
     {
+        private static ConcurrentDictionary<string, Lazy<ReaderWriterLockSlim>> LookupLocks = new ConcurrentDictionary<string, Lazy<ReaderWriterLockSlim>>(); 
+
         private const string FacebookTokenPrefix = "facebook ";
         private readonly IUserRepository _userRepository;
 
@@ -31,7 +36,11 @@ namespace SandwichClub.Api.Services
 
             if (fbuser.error != null) return null;
 
-            using (var transaction = await _userRepository.BeginTransactionAsync())
+            var lookupLock = LookupLocks.GetOrAdd(fbuser.id, new Lazy<ReaderWriterLockSlim>(() => new ReaderWriterLockSlim())).Value;
+
+            lookupLock.EnterWriteLock();
+
+            try
             {
                 var user = await _userRepository.GetBySocialId(fbuser.id) ?? new User();
 
@@ -46,9 +55,11 @@ namespace SandwichClub.Api.Services
                 else
                     await _userRepository.UpdateAsync(user);
 
-                transaction.Commit();
-
                 return user;
+            }
+            finally
+            {
+                lookupLock.ExitWriteLock();
             }
         }
 
