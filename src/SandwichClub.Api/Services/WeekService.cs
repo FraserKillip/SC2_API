@@ -8,9 +8,10 @@ namespace SandwichClub.Api.Services
 {
     public class WeekService : SaveOnlyBaseService<int, Week, IWeekRepository>, IWeekService
     {
-        private readonly IWeekUserLinkService _weekUserLinkServer;
+        private readonly IWeekUserLinkService _weekUserLinkService;
         public WeekService(IWeekRepository weekRepository, ILogger<WeekService> logger, IWeekUserLinkService weekUserLinkService) : base(weekRepository, logger)
         {
+            _weekUserLinkService = weekUserLinkService;
         }
 
         /// <summary>
@@ -55,7 +56,7 @@ namespace SandwichClub.Api.Services
 
         public async Task<Week> SubscibeToWeek(int weekId, int userId, int slices)
         {
-            var link = await _weekUserLinkServer.SaveAsync(new WeekUserLink { Slices = slices, WeekId = weekId, UserId = userId});
+            var link = await _weekUserLinkService.SaveAsync(new WeekUserLink { Slices = slices, WeekId = weekId, UserId = userId});
 
             return await GetByIdAsync(weekId);
         }
