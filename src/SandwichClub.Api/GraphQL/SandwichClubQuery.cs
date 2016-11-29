@@ -1,11 +1,12 @@
 using System;
 using GraphQL.Types;
 using SandwichClub.Api.GraphQL.Types;
+using SandwichClub.Api.Repositories.Models;
 using SandwichClub.Api.Services;
 
 namespace SandwichClub.Api.GraphQL {
     public class SandwichClubQuery : ObjectGraphType {
-        public SandwichClubQuery(IScSession session, IUserService userService, IWeekService weekService) {
+        public SandwichClubQuery(IScSession session, IUserService userService, IWeekService weekService, IWeekUserLinkService weekUserLinkService) {
 
             Name = "Query";
             Field<UserType>(
@@ -54,6 +55,17 @@ namespace SandwichClub.Api.GraphQL {
                     var weekId = context.GetArgument<int?>("weekId");
                     if (weekId != null) return weekService.GetByIdAsync(weekId.Value);
                     return null;
+                }
+            );
+
+            Field<WeekUserLinkType>(
+                "weekLink",
+                arguments: new QueryArguments(
+                    new QueryArgument<IntGraphType> { Name = "weekId", Description = "WeekId of the user" }
+                ),
+                resolve: context => {
+                    var weekId = context.GetArgument<int>("weekId");
+                    return weekUserLinkService.GetByIdAsync(new WeekUserLinkId { WeekId = weekId, UserId = (session.CurrentUser?.UserId).Value});
                 }
             );
         }

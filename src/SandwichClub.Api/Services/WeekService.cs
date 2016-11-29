@@ -54,9 +54,9 @@ namespace SandwichClub.Api.Services
             return 1 + (int) timespan.TotalDays / 7;
         }
 
-        public async Task<Week> SubscibeToWeek(int weekId, int userId, int slices)
+        public async Task<Week> SubscibeToWeek(int weekId, int userId, int slices, float paid)
         {
-            var link = await _weekUserLinkService.SaveAsync(new WeekUserLink { Slices = slices, WeekId = weekId, UserId = userId});
+            var link = await _weekUserLinkService.SaveAsync(new WeekUserLink { Slices = slices, WeekId = weekId, UserId = userId, Paid = paid});
 
             return await GetByIdAsync(weekId);
         }

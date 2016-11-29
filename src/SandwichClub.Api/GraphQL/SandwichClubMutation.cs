@@ -13,14 +13,16 @@ namespace SandwichClub.Api.GraphQL {
                 arguments: new QueryArguments(
                     new QueryArgument<IntGraphType> { Name = "userId", Description = "UserId of the user" },
                     new QueryArgument<IntGraphType> { Name = "weekId", Description = "WeekId of the week" },
-                    new QueryArgument<IntGraphType> { Name = "slices", Description = "WeekId of the week" }
+                    new QueryArgument<IntGraphType> { Name = "slices", Description = "WeekId of the week" },
+                    new QueryArgument<FloatGraphType> { Name = "paid", Description = "WeekId of the week" }
                 ),
                 resolve: (context) => {
                     var userId = context.GetArgument<int>("userId");
                     var weekId = context.GetArgument<int>("weekId");
                     var slices = context.GetArgument<int>("slices");
+                    var paid = context.GetArgument<float>("paid");
 
-                    return weekService.SubscibeToWeek(weekId, userId, slices);
+                    return weekService.SubscibeToWeek(weekId, userId, slices, paid);
                 }
             );
 
