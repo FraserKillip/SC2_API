@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Moq;
 using SandwichClub.Api.Repositories;
@@ -10,15 +13,79 @@ namespace SandwichClub.Api.Tests.Services
 {
     public class WeekServiceTests
     {
+        public class PaymentWeekServiceTests : UnitTestBase<WeekService>
+        {
+            private const int WeekId = 42;
+            private readonly Week _week;
+            private readonly List<WeekUserLink> _weekLinks;
+
+            public PaymentWeekServiceTests()
+            {
+                _week = new Week {WeekId = WeekId};
+
+                _weekLinks = new List<WeekUserLink>();
+
+                Mock<IWeekRepository>().Setup(i => i.GetByIdAsync(WeekId)).Returns(() => Task.FromResult(_week));
+                Mock<IWeekUserLinkService>().Setup(i => i.GetByWeekIdAsync(WeekId)).Returns(() => Task.FromResult((IEnumerable<WeekUserLink>)_weekLinks));
+                Mock<IWeekUserLinkService>().Setup(i => i.GetByUserIdAsync(It.IsAny<int>(), It.IsAny<bool>()))
+                    .Returns((int id, bool ignore) => Task.FromResult(_weekLinks.Where(_ => _.UserId == id)));
+            }
+
+            public void AddWeekLinks(int number)
+            {
+                for (var i = 0; i < number; ++i)
+                    _weekLinks.Add(new WeekUserLink {WeekId = WeekId, UserId = i});
+            }
+
+            [Theory]
+            [InlineData(2, 10, 5)]
+            [InlineData(10, 10, 1)]
+            public async Task GetAmountToPayPerPersonAsync_CheckAmount(int users, double cost, double expectedPayment)
+            {
+                // Given
+                _week.Cost = cost;
+                AddWeekLinks(users);
+
+                // When
+                var calculatedPayment = await Service.GetAmountToPayPerPersonAsync(WeekId);
+
+                // Verify
+                Assert.Equal(expectedPayment, calculatedPayment, 3);
+            }
+
+            [Theory]
+            [InlineData(2, 10, 5)]
+            [InlineData(10, 10, 1)]
+            public async Task MarkAllLinksAsPaidForUserAsync(int users, double cost, double expectedPayment)
+            {
+                // Given
+                var userId = 82;
+                _week.Cost = cost;
+                AddWeekLinks(users);
+                _weekLinks.First().UserId = userId;
+
+                // When
+                var result = await Service.MarkAllLinksAsPaidForUserAsync(1);
+
+                // Verify
+                var paidLinks = result.ToList();
+                Assert.Equal(1, paidLinks.Count);
+                var link = paidLinks.First();
+
+                Assert.Equal(expectedPayment, link.Paid, 3);
+                Mock<IWeekUserLinkService>().Verify(i => i.SaveAsync(It.IsAny<WeekUserLink>()), Times.Once);
+            }
+        }
+
         public class StaticWeekServiceTests : UnitTestBase<WeekService>
         {
-            private static readonly DateTime startOfComputerTime = new DateTime(1970, 1, 1);
+            private static readonly DateTime StartOfComputerTime = new DateTime(1970, 1, 1);
 
             [Fact]
             public void GetWeekId_GivenStartOfComputerTime_IdShouldBeZero()
             {
                 // When
-                var weekId = Service.GetWeekId(startOfComputerTime);
+                var weekId = Service.GetWeekId(StartOfComputerTime);
 
                 // Verify
                 Assert.Equal(0, weekId);
@@ -28,7 +95,7 @@ namespace SandwichClub.Api.Tests.Services
             public void GetWeekId_GivenStartOfComputerTimeAndOneWeek_IdShouldBeOne()
             {
                 // When
-                var weekId = Service.GetWeekId(startOfComputerTime.AddDays(7));
+                var weekId = Service.GetWeekId(StartOfComputerTime.AddDays(7));
 
                 // Verify
                 Assert.Equal(1, weekId);
@@ -39,7 +106,7 @@ namespace SandwichClub.Api.Tests.Services
             {
                 // Given
                 // Get a week which should match id 1
-                var date = startOfComputerTime.AddDays(7);
+                var date = StartOfComputerTime.AddDays(7);
                 // Translate to the monday of that week
                 date = date.AddDays((int)DayOfWeek.Monday-(int)date.DayOfWeek);
                 var originalId = Service.GetWeekId(date);

@@ -1,14 +1,17 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using SandwichClub.Api.Repositories;
 using SandwichClub.Api.Repositories.Models;
+using System.Linq;
 
 namespace SandwichClub.Api.Services
 {
     public class WeekService : SaveOnlyBaseService<int, Week, IWeekRepository>, IWeekService
     {
         private readonly IWeekUserLinkService _weekUserLinkService;
+
         public WeekService(IWeekRepository weekRepository, ILogger<WeekService> logger, IWeekUserLinkService weekUserLinkService) : base(weekRepository, logger)
         {
             _weekUserLinkService = weekUserLinkService;
@@ -32,7 +35,7 @@ namespace SandwichClub.Api.Services
             return week.Cost <= 0.0 && week.ShopperUserId == null;
         }
 
-                public override int GetId(Week t)
+        public override int GetId(Week t)
         {
             return t.WeekId;
         }
@@ -40,6 +43,31 @@ namespace SandwichClub.Api.Services
         public Task<Week> GetCurrentWeekAsync()
         {
             return GetByIdAsync(GetWeekId(DateTime.Now));
+        }
+
+        public async Task<double> GetAmountToPayPerPersonAsync(int weekId)
+        {
+            var week = await GetByIdAsync(weekId);
+            var links = await _weekUserLinkService.GetByWeekIdAsync(weekId);
+
+            return week.Cost/links.Count();
+        }
+
+        public async Task<IEnumerable<WeekUserLink>> MarkAllLinksAsPaidForUserAsync(int userId)
+        {
+            // Get them weeks
+            var unpaidWeeks = await _weekUserLinkService.GetByUserIdAsync(userId, unpaidOnly:true);
+
+            foreach (var week in unpaidWeeks)
+            {
+                // Get the $$$
+                var amountToPay = await GetAmountToPayPerPersonAsync(week.WeekId);
+                week.Paid = amountToPay;
+                // Do it
+                await _weekUserLinkService.SaveAsync(week);
+            }
+
+            return unpaidWeeks;
         }
 
         public int GetWeekId(DateTime date)
