@@ -12,7 +12,7 @@ namespace SandwichClub.Api.Services
         /// </summary>
         Task<Week> GetCurrentWeekAsync();
 
-        Task<double> GetAmountToPayPerPersonAsync(int weekId);
+        Task<decimal> GetAmountToPayPerPersonAsync(int weekId);
 
         Task<IEnumerable<WeekUserLink>> MarkAllLinksAsPaidForUserAsync(int userId);
 
@@ -22,5 +22,6 @@ namespace SandwichClub.Api.Services
         int GetWeekId(DateTime date);
 
         Task<Week> SubscibeToWeek(int weekId, int userId, int slices, float paid);
+        Task<decimal> GetTotalCostsForUserAsync(int userId);
     }
 }

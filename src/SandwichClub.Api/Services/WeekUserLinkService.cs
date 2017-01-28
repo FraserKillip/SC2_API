@@ -28,6 +28,16 @@ namespace SandwichClub.Api.Services
             return await task;
         }
 
+        public Task<int> CountForWeekAsync(int weekId)
+        {
+            return Repository.CountForWeekAsync(weekId);
+        }
+
+        public Task<decimal> GetSumPaidForUserAsync(int userId)
+        {
+            return Repository.GetSumPaidForUserAsync(userId);
+        }
+
         protected override bool SaveShouldDelete(WeekUserLink link)
         {
             return link.Paid <= 0 && link.Slices <= 0;

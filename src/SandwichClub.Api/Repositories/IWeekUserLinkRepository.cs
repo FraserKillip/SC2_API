@@ -8,5 +8,7 @@ namespace SandwichClub.Api.Repositories
     {
         Task<IEnumerable<WeekUserLink>> GetByWeekIdAsync(int weekId);
         Task<IEnumerable<WeekUserLink>> GetByUserIdAsync(int userId);
+        Task<int> CountForWeekAsync(int weekId);
+        Task<decimal> GetSumPaidForUserAsync(int userId);
     }
 }

@@ -40,5 +40,15 @@ namespace SandwichClub.Api.Repositories
         {
             return await DbSet.Where(wul => wul.UserId == userId).ToListAsync();
         }
+
+        public async Task<int> CountForWeekAsync(int weekId)
+        {
+            return await DbSet.Where(wul => wul.WeekId == weekId).CountAsync();
+        }
+
+        public async Task<decimal> GetSumPaidForUserAsync(int userId)
+        {
+            return (decimal) await DbSet.Where(wul => wul.UserId == userId).SumAsync(wul => wul.Paid);
+        }
     }
 }
