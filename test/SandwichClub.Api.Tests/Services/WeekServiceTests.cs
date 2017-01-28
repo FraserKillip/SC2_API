@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -16,51 +15,62 @@ namespace SandwichClub.Api.Tests.Services
         public class PaymentWeekServiceTests : UnitTestBase<WeekService>
         {
             private const int WeekId = 42;
-            private readonly Week _week;
+            private Week Week => _weeks.FirstOrDefault(_ => _.WeekId == WeekId);
+            private readonly List<Week> _weeks;
             private readonly List<WeekUserLink> _weekLinks;
 
             public PaymentWeekServiceTests()
             {
-                _week = new Week {WeekId = WeekId};
-
+                _weeks = new List<Week> {new Week {WeekId = WeekId}};
                 _weekLinks = new List<WeekUserLink>();
 
-                Mock<IWeekRepository>().Setup(i => i.GetByIdAsync(WeekId)).Returns(() => Task.FromResult(_week));
-                Mock<IWeekUserLinkService>().Setup(i => i.GetByWeekIdAsync(WeekId)).Returns(() => Task.FromResult((IEnumerable<WeekUserLink>)_weekLinks));
+                Mock<IWeekRepository>().Setup(i => i.GetByIdAsync(It.IsAny<int>()))
+                    .Returns((int id) => Task.FromResult(_weeks.FirstOrDefault(_ => _.WeekId == id)));
+
+                Mock<IWeekUserLinkService>().Setup(i => i.GetByWeekIdAsync(WeekId))
+                    .Returns((int id) => Task.FromResult(_weekLinks.Where(_ => _.WeekId == id)));
                 Mock<IWeekUserLinkService>().Setup(i => i.GetByUserIdAsync(It.IsAny<int>(), It.IsAny<bool>()))
                     .Returns((int id, bool ignore) => Task.FromResult(_weekLinks.Where(_ => _.UserId == id)));
+                Mock<IWeekUserLinkService>().Setup(i => i.CountForWeekAsync(It.IsAny<int>()))
+                    .Returns((int id) => Task.FromResult(_weekLinks.Count(_ => _.WeekId == id)));
             }
 
             public void AddWeekLinks(int number)
             {
                 for (var i = 0; i < number; ++i)
-                    _weekLinks.Add(new WeekUserLink {WeekId = WeekId, UserId = i});
+                    _weekLinks.Add(new WeekUserLink { WeekId = WeekId, UserId = i });
+            }
+
+            public void AddWeekLinks(int number, int weekId)
+            {
+                for (var i = 0; i < number; ++i)
+                    _weekLinks.Add(new WeekUserLink { WeekId = weekId, UserId = i });
             }
 
             [Theory]
             [InlineData(2, 10, 5)]
             [InlineData(10, 10, 1)]
-            public async Task GetAmountToPayPerPersonAsync_CheckAmount(int users, double cost, double expectedPayment)
+            public async Task TestGetAmountToPayPerPersonAsync_CheckAmount(int users, double cost, decimal expectedPayment)
             {
                 // Given
-                _week.Cost = cost;
+                Week.Cost = cost;
                 AddWeekLinks(users);
 
                 // When
                 var calculatedPayment = await Service.GetAmountToPayPerPersonAsync(WeekId);
 
                 // Verify
-                Assert.Equal(expectedPayment, calculatedPayment, 3);
+                Assert.Equal(expectedPayment, calculatedPayment);
             }
 
             [Theory]
             [InlineData(2, 10, 5)]
             [InlineData(10, 10, 1)]
-            public async Task MarkAllLinksAsPaidForUserAsync(int users, double cost, double expectedPayment)
+            public async Task TestMarkAllLinksAsPaidForUserAsync(int users, double cost, double expectedPayment)
             {
                 // Given
                 var userId = 82;
-                _week.Cost = cost;
+                Week.Cost = cost;
                 AddWeekLinks(users);
                 _weekLinks.First().UserId = userId;
 
@@ -74,6 +84,31 @@ namespace SandwichClub.Api.Tests.Services
 
                 Assert.Equal(expectedPayment, link.Paid, 3);
                 Mock<IWeekUserLinkService>().Verify(i => i.SaveAsync(It.IsAny<WeekUserLink>()), Times.Once);
+            }
+
+            [Fact]
+            public async Task TestGetTotalCostsForUserAsync()
+            {
+                // Given
+                const int userId = 4;
+
+                // User 4 signed up to week 1 & 3
+                AddWeekLinks(5, 1);
+                AddWeekLinks(2, 2);
+                AddWeekLinks(9, 3);
+
+                // Weeks
+                _weeks.Add(new Week {WeekId = 1, Cost = 10}); // 10/5 = $2
+                _weeks.Add(new Week {WeekId = 2, Cost = 5}); // 5/2 = $2.5
+                _weeks.Add(new Week {WeekId = 3, Cost = 65}); // 65/9 = $7.22
+
+
+
+                // When
+                var cost = await Service.GetTotalCostsForUserAsync(userId);
+
+                // Verify
+                Assert.Equal(9.22m, cost, 2); // Should be accurate to 2dp
             }
         }
 

@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using SandwichClub.Api.Repositories;
 using SandwichClub.Api.Repositories.Models;
-using System.Linq;
 
 namespace SandwichClub.Api.Services
 {
@@ -45,12 +44,16 @@ namespace SandwichClub.Api.Services
             return GetByIdAsync(GetWeekId(DateTime.Now));
         }
 
-        public async Task<double> GetAmountToPayPerPersonAsync(int weekId)
+        public async Task<decimal> GetAmountToPayPerPersonAsync(int weekId)
         {
-            var week = await GetByIdAsync(weekId);
-            var links = await _weekUserLinkService.GetByWeekIdAsync(weekId);
 
-            return week.Cost/links.Count();
+            var week = await GetByIdAsync(weekId);
+            var linkCount = await _weekUserLinkService.CountForWeekAsync(weekId);
+
+            if (linkCount == 0)
+                return 0m;
+
+            return (decimal) week.Cost/linkCount;
         }
 
         public async Task<IEnumerable<WeekUserLink>> MarkAllLinksAsPaidForUserAsync(int userId)
@@ -62,7 +65,7 @@ namespace SandwichClub.Api.Services
             {
                 // Get the $$$
                 var amountToPay = await GetAmountToPayPerPersonAsync(week.WeekId);
-                week.Paid = amountToPay;
+                week.Paid = (double) amountToPay;
                 // Do it
                 await _weekUserLinkService.SaveAsync(week);
             }
@@ -87,6 +90,18 @@ namespace SandwichClub.Api.Services
             var link = await _weekUserLinkService.SaveAsync(new WeekUserLink { Slices = slices, WeekId = weekId, UserId = userId, Paid = paid});
 
             return await GetByIdAsync(weekId);
+        }
+
+        public async Task<decimal> GetTotalCostsForUserAsync(int userId)
+        {
+            var weekLinks = await _weekUserLinkService.GetByUserIdAsync(userId);
+
+            var totalCost = 0m;
+
+            foreach (var link in weekLinks)
+                totalCost += await GetAmountToPayPerPersonAsync(link.WeekId);
+
+            return totalCost;
         }
     }
 }
