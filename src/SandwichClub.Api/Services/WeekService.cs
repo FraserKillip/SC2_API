@@ -61,8 +61,13 @@ namespace SandwichClub.Api.Services
             // Get them weeks
             var unpaidWeeks = await _weekUserLinkService.GetByUserIdAsync(userId, unpaidOnly:true);
 
+            var currentWeekId = GetWeekId(DateTime.Now);
+
             foreach (var week in unpaidWeeks)
             {
+                if (week.WeekId == currentWeekId)
+                    continue;
+
                 // Get the $$$
                 var amountToPay = await GetAmountToPayPerPersonAsync(week.WeekId);
                 week.Paid = (double) amountToPay;
@@ -98,8 +103,14 @@ namespace SandwichClub.Api.Services
 
             var totalCost = 0m;
 
+            var currentWeekId = GetWeekId(DateTime.Now);
+
             foreach (var link in weekLinks)
+            {
+                if (link.WeekId == currentWeekId)
+                    continue;
                 totalCost += await GetAmountToPayPerPersonAsync(link.WeekId);
+            }
 
             return totalCost;
         }
