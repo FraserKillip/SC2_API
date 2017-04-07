@@ -29,7 +29,7 @@ namespace SandwichClub.Api.GraphQL {
                 }
             );
 
-            Field<WeekUserLinkType>(
+            Field<ArrayGraphType<WeekUserLinkType>>(
                 "markAllWeeksPaidForUser",
                 arguments: new QueryArguments(
                     new QueryArgument<IntGraphType> { Name = "userId", Description = "UserId to mark weeks paid for" }
