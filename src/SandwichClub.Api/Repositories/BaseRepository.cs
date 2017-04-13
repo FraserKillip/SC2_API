@@ -49,8 +49,7 @@ namespace SandwichClub.Api.Repositories
             }
 
             // Find the item
-            throw new NotImplementedException("Waiting for EntityFrameworkCore 1.1.0 :'(");
-            //return await DbSet.FindAsync(keys);
+            return await DbSet.FindAsync(keys);
         }
 
         public async virtual Task<IEnumerable<T>> GetByIdsAsync(IEnumerable<TId> ids)
