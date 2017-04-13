@@ -8,7 +8,6 @@ using System.Reflection;
 using System.Collections.Concurrent;
 using System;
 using Microsoft.EntityFrameworkCore.Storage;
-using System.Threading;
 
 namespace SandwichClub.Api.Repositories
 {
@@ -19,7 +18,6 @@ namespace SandwichClub.Api.Repositories
 
     public abstract class BaseRepository<TId, T> : BaseRepository, IBaseRepository<TId, T> where T : class
     {
-        private readonly SemaphoreSlim _contextSemaphore = new SemaphoreSlim(1);
         private readonly ScContext _context;
         private readonly DbSet<T> _dbSet;
         protected readonly IMapper Mapper;
@@ -36,13 +34,13 @@ namespace SandwichClub.Api.Repositories
             bool success = false;
             try
             {
-                success = _contextSemaphore.Wait(1000);
+                success = _context.ContextSemaphore.Wait(1000);
                 return action(_context, _dbSet);
             }
             finally
             {
                 if (success)
-                    _contextSemaphore.Release();
+                    _context.ContextSemaphore.Release();
             }
         }
 
@@ -54,13 +52,13 @@ namespace SandwichClub.Api.Repositories
             bool success = false;
             try
             {
-                success = await _contextSemaphore.WaitAsync(1000);
+                success = await _context.ContextSemaphore.WaitAsync(1000);
                 return await action(_context, _dbSet);
             }
             finally
             {
                 if (success)
-                    _contextSemaphore.Release();
+                    _context.ContextSemaphore.Release();
             }
         }
 

@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using SandwichClub.Api.Repositories.Models;
+using System.Threading;
 
 namespace SandwichClub.Api.Repositories
 {
@@ -8,6 +9,8 @@ namespace SandwichClub.Api.Repositories
         public ScContext(DbContextOptions<ScContext> options)
             : base(options)
         { }
+
+        public SemaphoreSlim ContextSemaphore { get; } = new SemaphoreSlim(1);
 
          public DbSet<Week> Weeks { get; set; }
          public DbSet<User> Users { get; set; }
