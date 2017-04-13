@@ -18,22 +18,22 @@ namespace SandwichClub.Api.Repositories
 
         public async Task<IEnumerable<WeekUserLink>> GetByWeekIdAsync(int weekId)
         {
-            return await DbSet.Where(wul => wul.WeekId == weekId).ToListAsync();
+            return await ExecuteAsync(async dbSet => await dbSet.Where(wul => wul.WeekId == weekId).ToListAsync());
         }
 
         public async Task<IEnumerable<WeekUserLink>> GetByUserIdAsync(int userId)
         {
-            return await DbSet.Where(wul => wul.UserId == userId).ToListAsync();
+            return await ExecuteAsync(async dbSet => await dbSet.Where(wul => wul.UserId == userId).ToListAsync());
         }
 
         public async Task<int> CountForWeekAsync(int weekId)
         {
-            return await DbSet.Where(wul => wul.WeekId == weekId).CountAsync();
+            return await ExecuteAsync(async dbSet => await dbSet.Where(wul => wul.WeekId == weekId).CountAsync());
         }
 
         public async Task<decimal> GetSumPaidForUserAsync(int userId)
         {
-            return (decimal) await DbSet.Where(wul => wul.UserId == userId).SumAsync(wul => wul.Paid);
+            return (decimal) await ExecuteAsync(async dbSet => await dbSet.Where(wul => wul.UserId == userId).SumAsync(wul => wul.Paid));
         }
     }
 }

@@ -8,6 +8,7 @@ using System.Reflection;
 using System.Collections.Concurrent;
 using System;
 using Microsoft.EntityFrameworkCore.Storage;
+using System.Threading;
 
 namespace SandwichClub.Api.Repositories
 {
@@ -18,15 +19,58 @@ namespace SandwichClub.Api.Repositories
 
     public abstract class BaseRepository<TId, T> : BaseRepository, IBaseRepository<TId, T> where T : class
     {
-        protected readonly ScContext Context;
-        protected readonly DbSet<T> DbSet;
+        private readonly SemaphoreSlim _contextSemaphore = new SemaphoreSlim(1);
+        private readonly ScContext _context;
+        private readonly DbSet<T> _dbSet;
         protected readonly IMapper Mapper;
 
         protected BaseRepository(ScContext context, IMapper mapper)
         {
-            Context = context;
-            DbSet = context.Set<T>();
+            _context = context;
+            _dbSet = context.Set<T>();
             Mapper = mapper;
+        }
+
+        protected TResult Execute<TResult>(Func<ScContext, DbSet<T>, TResult> action)
+        {
+            bool success = false;
+            try
+            {
+                success = _contextSemaphore.Wait(1000);
+                return action(_context, _dbSet);
+            }
+            finally
+            {
+                if (success)
+                    _contextSemaphore.Release();
+            }
+        }
+
+        protected async Task<TResult> ExecuteAsync<TResult>(Func<DbSet<T>, Task<TResult>> action)
+            => await ExecuteAsync(async (context, dbSet) => await action(dbSet));
+
+        protected async Task<TResult> ExecuteAsync<TResult>(Func<ScContext, DbSet<T>, Task<TResult>> action)
+        {
+            bool success = false;
+            try
+            {
+                success = await _contextSemaphore.WaitAsync(1000);
+                return await action(_context, _dbSet);
+            }
+            finally
+            {
+                if (success)
+                    _contextSemaphore.Release();
+            }
+        }
+
+        protected async Task ExecuteAsync(Func<ScContext, DbSet<T>, Task> action)
+        {
+            await ExecuteAsync(async (context, dbSet) =>
+            {
+                await action(context, dbSet);
+                return true;
+            });
         }
 
         public virtual object[] GetKeys(TId id)
@@ -49,7 +93,7 @@ namespace SandwichClub.Api.Repositories
             }
 
             // Find the item
-            return await DbSet.FindAsync(keys);
+            return await ExecuteAsync(async dbSet => await dbSet.FindAsync(keys));
         }
 
         public async virtual Task<IEnumerable<T>> GetByIdsAsync(IEnumerable<TId> ids)
@@ -64,42 +108,51 @@ namespace SandwichClub.Api.Repositories
 
         protected EntityEntry<T> Entry(T t)
         {
-            var entry = Context.ChangeTracker.Entries<T>().Where(e => t.Equals(e.Entity)).FirstOrDefault();
-            if (entry != null)
+            return Execute((context, dbSet) =>
             {
-                Mapper.Map<T, T>(t, entry.Entity);
-                return entry;
-            }
-            return Context.Attach<T>(t);
+                var entry = context.ChangeTracker.Entries<T>().Where(e => t.Equals(e.Entity)).FirstOrDefault();
+                if (entry != null)
+                {
+                    Mapper.Map<T, T>(t, entry.Entity);
+                    return entry;
+                }
+                return context.Attach<T>(t);
+            });
         }
 
         public async Task<IEnumerable<T>> GetAsync()
-            => await DbSet.ToListAsync();
+            => await ExecuteAsync(async dbSet => await dbSet.ToListAsync());
 
         public async Task<int> CountAsync()
         {
-            return await DbSet.CountAsync();
+            return await ExecuteAsync(async dbSet => await dbSet.CountAsync());
         }
 
         public async Task<T> InsertAsync(T t)
         {
-            var entry = Entry(t);
-            if (entry.State != EntityState.Unchanged)
-                throw new DatabaseException("Can't insert entity which already exists");
-            entry.State = EntityState.Added;
-            await Context.SaveChangesAsync();
-            return entry.Entity;
+            return await ExecuteAsync(async (context, dbSet) =>
+            {
+                var entry = Entry(t);
+                if (entry.State != EntityState.Unchanged)
+                    throw new DatabaseException("Can't insert entity which already exists");
+                entry.State = EntityState.Added;
+                await context.SaveChangesAsync();
+                return entry.Entity;
+            });
         }
 
         public async Task<T> UpdateAsync(T t)
         {
-            var entry = Entry(t);
-            if (entry.State == EntityState.Deleted)
-                throw new DatabaseException("Can't update entity which is deleted");
-            if (entry.State != EntityState.Added)
-                entry.State = EntityState.Modified;
-            await Context.SaveChangesAsync();
-            return entry.Entity;
+            return await ExecuteAsync(async (context, dbSet) =>
+            {
+                var entry = Entry(t);
+                if (entry.State == EntityState.Deleted)
+                    throw new DatabaseException("Can't update entity which is deleted");
+                if (entry.State != EntityState.Added)
+                    entry.State = EntityState.Modified;
+                await context.SaveChangesAsync();
+                return entry.Entity;
+            });
         }
 
         public async Task<T> DeleteAsync(TId id)
@@ -109,17 +162,23 @@ namespace SandwichClub.Api.Repositories
 
         public async Task<T> DeleteAsync(T t)
         {
-            var entry = Entry(t);
-            if (entry.State == EntityState.Deleted)
+            return await ExecuteAsync(async (context, dbSet) =>
+            {
+                var entry = Entry(t);
+                if (entry.State == EntityState.Deleted)
+                    return entry.Entity;
+                entry.State = EntityState.Deleted;
+                await context.SaveChangesAsync();
                 return entry.Entity;
-            entry.State = EntityState.Deleted;
-            await Context.SaveChangesAsync();
-            return entry.Entity;
+            });
         }
 
         public async Task<IDbContextTransaction> BeginTransactionAsync()
         {
-            return await Context.Database.BeginTransactionAsync();
+            return await ExecuteAsync(async (context, dbSet) =>
+            {
+                return await context.Database.BeginTransactionAsync();
+            });
         }
     }
 }

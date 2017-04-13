@@ -15,12 +15,12 @@ namespace SandwichClub.Api.Repositories
         
         public override async Task<IEnumerable<User>> GetByIdsAsync(IEnumerable<int> ids)
         {
-            return await DbSet.Where(u => ids.Contains(u.UserId)).ToListAsync();
+            return await ExecuteAsync(async (dbSet) => await dbSet.Where(u => ids.Contains(u.UserId)).ToListAsync());
         }
 
         public async Task<User> GetBySocialId(string id)
         {
-            return await DbSet.FirstOrDefaultAsync(u => u.FacebookId == id);
+            return await ExecuteAsync(async (dbSet) => await dbSet.FirstOrDefaultAsync(u => u.FacebookId == id));
         }
     }
 }
