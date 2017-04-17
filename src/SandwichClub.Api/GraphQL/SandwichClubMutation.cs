@@ -15,7 +15,7 @@ namespace SandwichClub.Api.GraphQL {
                 arguments: new QueryArguments(
                     new QueryArgument<IntGraphType> { Name = "userId", Description = "UserId of the user" },
                     new QueryArgument<IntGraphType> { Name = "weekId", Description = "WeekId of the week" },
-                    new QueryArgument<IntGraphType> { Name = "slices", Description = "WeekId of the week" },
+                    new QueryArgument<IntGraphType> { Name = "slices", Description = "WeekId of the week" }
                 ),
                 resolve: (context) =>
                 {
