@@ -41,7 +41,7 @@ namespace SandwichClub.Api.Services
 
         public Task<Week> GetCurrentWeekAsync()
         {
-            return GetByIdAsync(GetWeekId(DateTime.Now));
+            return GetByIdAsync(GetCurrentWeekId());
         }
 
         public async Task<decimal> GetAmountToPayPerPersonAsync(int weekId)
@@ -56,7 +56,7 @@ namespace SandwichClub.Api.Services
             return (decimal) week.Cost/linkCount;
         }
 
-        public async Task<IEnumerable<WeekUserLink>> MarkAllLinksAsPaidForUserAsync(int userId)
+        public async Task<WeekUserLink> MarkAllLinksAsPaidForUserAsync(int userId)
         {
             // Get them weeks
             var totalAmountToBePaid = await GetTotalCostsForUserAsync(userId);
@@ -64,36 +64,18 @@ namespace SandwichClub.Api.Services
 
             var amountOwed = totalAmountToBePaid - totalAmountPaid;
 
-            var unpaidWeeks = await _weekUserLinkService.GetByUserIdAsync(userId, unpaidOnly:true);
+            var currentWeekId = GetCurrentWeekId();
+            var link = await _weekUserLinkService.GetByIdAsync(new WeekUserLinkId { UserId = userId, WeekId = currentWeekId })
+                ?? new WeekUserLink { UserId = userId, WeekId = currentWeekId };
 
-            var currentWeekId = GetWeekId(DateTime.Now);
+            link.Paid += (double) amountOwed;
 
-            foreach (var week in unpaidWeeks)
-            {
-                if (week.WeekId >= currentWeekId)
-                    continue;
+            return await _weekUserLinkService.SaveAsync(link);
+        }
 
-                // Get the $$$
-                var amountToPay = await GetAmountToPayPerPersonAsync(week.WeekId);
-                // Make sure we don't overpay
-                if (amountOwed - amountToPay <= 0)
-                {
-                    amountToPay = amountOwed;
-                    amountOwed = 0;
-                }
-                else
-                {
-                    amountOwed -= amountToPay;
-                }
-                week.Paid = (double) amountToPay;
-                // Do it
-                await _weekUserLinkService.SaveAsync(week);
-
-                if (amountOwed <= 0)
-                    break;
-            }
-
-            return unpaidWeeks;
+        public int GetCurrentWeekId()
+        {
+            return GetWeekId(DateTime.Now);
         }
 
         public int GetWeekId(DateTime date)
