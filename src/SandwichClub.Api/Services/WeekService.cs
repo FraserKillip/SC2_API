@@ -59,6 +59,11 @@ namespace SandwichClub.Api.Services
         public async Task<IEnumerable<WeekUserLink>> MarkAllLinksAsPaidForUserAsync(int userId)
         {
             // Get them weeks
+            var totalAmountToBePaid = await GetTotalCostsForUserAsync(userId);
+            var totalAmountPaid = await _weekUserLinkService.GetSumPaidForUserAsync(userId);
+
+            var amountOwed = totalAmountToBePaid - totalAmountPaid;
+
             var unpaidWeeks = await _weekUserLinkService.GetByUserIdAsync(userId, unpaidOnly:true);
 
             var currentWeekId = GetWeekId(DateTime.Now);
@@ -70,9 +75,22 @@ namespace SandwichClub.Api.Services
 
                 // Get the $$$
                 var amountToPay = await GetAmountToPayPerPersonAsync(week.WeekId);
+                // Make sure we don't overpay
+                if (amountOwed - amountToPay <= 0)
+                {
+                    amountToPay = amountOwed;
+                    amountOwed = 0;
+                }
+                else
+                {
+                    amountOwed -= amountToPay;
+                }
                 week.Paid = (double) amountToPay;
                 // Do it
                 await _weekUserLinkService.SaveAsync(week);
+
+                if (amountOwed <= 0)
+                    break;
             }
 
             return unpaidWeeks;
