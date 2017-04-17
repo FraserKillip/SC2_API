@@ -15,40 +15,25 @@ namespace SandwichClub.Api.Repositories
 
         public override object[] GetKeys(WeekUserLinkId id)
             => new object[] { id.WeekId, id.UserId };
-        
-        public override async Task<WeekUserLink> GetByIdAsync(WeekUserLinkId id)
-        {
-            if (id.WeekId == 0 || id.UserId == 0)
-                return null;
-            return await DbSet.FirstOrDefaultAsync(wul => wul.WeekId == id.WeekId && wul.UserId == id.UserId);
-        }
-
-        public override async Task<IEnumerable<WeekUserLink>> GetByIdsAsync(IEnumerable<WeekUserLinkId> ids)
-        {
-            var linkTasks = ids.Select(GetByIdAsync);
-            var links = await Task.WhenAll(linkTasks);
-
-            return links.Where(link => link != null);
-        }
 
         public async Task<IEnumerable<WeekUserLink>> GetByWeekIdAsync(int weekId)
         {
-            return await DbSet.Where(wul => wul.WeekId == weekId).ToListAsync();
+            return await ExecuteAsync(async dbSet => await dbSet.Where(wul => wul.WeekId == weekId).ToListAsync());
         }
 
         public async Task<IEnumerable<WeekUserLink>> GetByUserIdAsync(int userId)
         {
-            return await DbSet.Where(wul => wul.UserId == userId).ToListAsync();
+            return await ExecuteAsync(async dbSet => await dbSet.Where(wul => wul.UserId == userId).ToListAsync());
         }
 
         public async Task<int> CountForWeekAsync(int weekId)
         {
-            return await DbSet.Where(wul => wul.WeekId == weekId).CountAsync();
+            return await ExecuteAsync(async dbSet => await dbSet.Where(wul => wul.WeekId == weekId).CountAsync());
         }
 
         public async Task<decimal> GetSumPaidForUserAsync(int userId)
         {
-            return (decimal) await DbSet.Where(wul => wul.UserId == userId).SumAsync(wul => wul.Paid);
+            return (decimal) await ExecuteAsync(async dbSet => await dbSet.Where(wul => wul.UserId == userId).SumAsync(wul => wul.Paid));
         }
     }
 }

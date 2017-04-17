@@ -1,20 +1,17 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.26403.3
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{56DA3AC9-B158-4B81-8752-B1422FAC530F}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{007CA26D-C71D-4486-9164-748B823325B5}"
-	ProjectSection(SolutionItems) = preProject
-		global.json = global.json
-	EndProjectSection
-EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "SandwichClub.Api", "src\SandwichClub.Api\SandwichClub.Api.xproj", "{8EC21B97-4002-4C01-8F99-612328036FC6}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{BC91E1A7-6579-4A24-8267-72DAD8BAB3BD}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "SandwichClub.Api.Tests", "test\SandwichClub.Api.Tests\SandwichClub.Api.Tests.xproj", "{192B8B46-571C-40B7-83EC-4B0FE8837BED}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SandwichClub.Api", "src\SandwichClub.Api\SandwichClub.Api.csproj", "{8EC21B97-4002-4C01-8F99-612328036FC6}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SandwichClub.Api.Tests", "test\SandwichClub.Api.Tests\SandwichClub.Api.Tests.csproj", "{192B8B46-571C-40B7-83EC-4B0FE8837BED}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -12,22 +12,15 @@ namespace SandwichClub.Api.Repositories
         public UserRepository(ScContext context, IMapper mapper) : base(context, mapper)
         {
         }
-
-        public override async Task<User> GetByIdAsync(int id)
-        {
-            if (id == 0)
-                return null;
-            return await DbSet.FirstOrDefaultAsync(u => u.UserId == id);
-        }
         
         public override async Task<IEnumerable<User>> GetByIdsAsync(IEnumerable<int> ids)
         {
-            return await DbSet.Where(u => ids.Contains(u.UserId)).ToListAsync();
+            return await ExecuteAsync(async (dbSet) => await dbSet.Where(u => ids.Contains(u.UserId)).ToListAsync());
         }
 
         public async Task<User> GetBySocialId(string id)
         {
-            return await DbSet.FirstOrDefaultAsync(u => u.FacebookId == id);
+            return await ExecuteAsync(async (dbSet) => await dbSet.FirstOrDefaultAsync(u => u.FacebookId == id));
         }
     }
 }

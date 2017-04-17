@@ -70,7 +70,7 @@ namespace SandwichClub.Api.Services
 
             foreach (var week in unpaidWeeks)
             {
-                if (week.WeekId == currentWeekId)
+                if (week.WeekId >= currentWeekId)
                     continue;
 
                 // Get the $$$
@@ -125,7 +125,7 @@ namespace SandwichClub.Api.Services
 
             foreach (var link in weekLinks)
             {
-                if (link.WeekId == currentWeekId)
+                if (link.WeekId >= currentWeekId)
                     continue;
                 totalCost += await GetAmountToPayPerPersonAsync(link.WeekId);
             }
