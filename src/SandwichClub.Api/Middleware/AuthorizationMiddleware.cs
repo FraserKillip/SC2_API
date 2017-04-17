@@ -45,7 +45,7 @@ namespace SandwichClub.Api.Middleware
 
             var token = context.Request.Headers.Keys.Contains("Sandwich-Auth-Token") ? context.Request.Headers["Sandwich-Auth-Token"] : context.Request.Headers["sandwich-auth-token"];
 
-            if (token == null) {
+            if (token == default(string)) {
                 context.Response.StatusCode = (int) HttpStatusCode.Unauthorized;
                 await context.Response.WriteAsync("Invalid Sandwich-Auth-Token header");
                 return;
