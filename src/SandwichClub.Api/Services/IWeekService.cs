@@ -21,7 +21,7 @@ namespace SandwichClub.Api.Services
         /// </summary>
         int GetWeekId(DateTime date);
 
-        Task<Week> SubscibeToWeek(int weekId, int userId, int slices, float paid);
+        Task<Week> SubscibeToWeek(int weekId, int userId, int slices);
         Task<decimal> GetTotalCostsForUserAsync(int userId);
     }
 }

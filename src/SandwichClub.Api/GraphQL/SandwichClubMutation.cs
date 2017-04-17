@@ -16,6 +16,7 @@ namespace SandwichClub.Api.GraphQL {
                     new QueryArgument<IntGraphType> { Name = "userId", Description = "UserId of the user" },
                     new QueryArgument<IntGraphType> { Name = "weekId", Description = "WeekId of the week" },
                     new QueryArgument<IntGraphType> { Name = "slices", Description = "WeekId of the week" },
+                    // TODO - Remove this parameter
                     new QueryArgument<FloatGraphType> { Name = "paid", Description = "WeekId of the week" }
                 ),
                 resolve: (context) =>
@@ -23,9 +24,8 @@ namespace SandwichClub.Api.GraphQL {
                     var userId = context.GetArgument<int>("userId");
                     var weekId = context.GetArgument<int>("weekId");
                     var slices = context.GetArgument<int>("slices");
-                    var paid = context.GetArgument<float>("paid");
 
-                    return weekService.SubscibeToWeek(weekId, userId, slices, paid);
+                    return weekService.SubscibeToWeek(weekId, userId, slices);
                 }
             );
 
