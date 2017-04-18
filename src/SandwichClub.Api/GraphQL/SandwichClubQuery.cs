@@ -1,4 +1,3 @@
-using System;
 using GraphQL.Types;
 using SandwichClub.Api.GraphQL.Types;
 using SandwichClub.Api.Repositories.Models;
@@ -13,6 +12,13 @@ namespace SandwichClub.Api.GraphQL {
                 "me",
                 resolve: context => {
                     return userService.GetByIdAsync((session.CurrentUser?.UserId).Value);
+                }
+            );
+
+            Field<UserType>(
+                "primaryShopper",
+                resolve: context => {
+                    return userService.GetPrimaryShopperAsync();
                 }
             );
 

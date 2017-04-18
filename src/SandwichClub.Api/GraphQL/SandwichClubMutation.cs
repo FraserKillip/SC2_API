@@ -65,14 +65,24 @@ namespace SandwichClub.Api.GraphQL {
                 "updateMe",
                 arguments: new QueryArguments(
                     new QueryArgument<StringGraphType> { Name = "bankName", Description = "The name of the users week bank" },
-                    new QueryArgument<StringGraphType> { Name = "bankDetails", Description = "Details for making payments" }
+                    new QueryArgument<StringGraphType> { Name = "bankDetails", Description = "Details for making payments" },
+                    new QueryArgument<BooleanGraphType> { Name = "shopper", Description = "Set as shopper" }
                 ),
                 resolve: (context) =>
                 {
                     var user = session.CurrentUser;
 
-                    user.BankName = context.GetArgument<string>("bankName");
-                    user.BankDetails = context.GetArgument<string>("bankDetails");
+                    var bankName = context.GetArgument<string>("bankName");
+                    var bankDetails = context.GetArgument<string>("bankDetails");
+                    var shopper = context.GetArgument<bool?>("shopper");
+
+                    if (bankName != null)
+                        user.BankName = bankName;
+                    if (bankDetails != null)
+                        user.BankDetails = bankDetails;
+                    if (shopper != null)
+                        user.Shopper = shopper.Value;
+
                     return userService.SaveAsync(user);
                 }
             );
