@@ -103,6 +103,7 @@ namespace GraphQL.Middleware
     </style>
     <title>GraphiQL</title>
     <link rel='stylesheet' href='https://cdn.jsdelivr.net/graphiql/0.7.5/graphiql.css' />
+    <script src='https://code.jquery.com/jquery-3.2.1.min.js'></script>
     <script src='https://cdn.jsdelivr.net/fetch/latest/fetch.min.js'></script>
     <script src='https://cdn.jsdelivr.net/react/latest/react.min.js'></script>
     <script src='https://cdn.jsdelivr.net/react/latest/react-dom.min.js'></script>
@@ -164,11 +165,19 @@ namespace GraphQL.Middleware
       }
       // Defines a GraphQL fetcher using the fetch API.
       function graphQLFetcher(graphQLParams) {
+        var sandwichAuthToken = '';
+
+        try {
+          sandwichAuthToken = $('#sandwichauthtoken').val();
+        } catch (err) {
+        }
+
         return fetch(window.location.origin + '@{GraphQLPath}', {
           method: 'post',
           headers: {
             'Accept': 'application/json',
             'Content-Type': 'application/json',
+            'sandwich-auth-token': sandwichAuthToken,
           },
           body: JSON.stringify(graphQLParams),
           credentials: 'include',
@@ -195,6 +204,14 @@ namespace GraphQL.Middleware
         }),
         document.getElementById('graphiql')
       );
+
+      setTimeout(function () {
+        var tokenInput = document.createElement('input');
+        tokenInput.id = 'sandwichauthtoken';
+        tokenInput.type = 'text';
+        tokenInput.placeholder = 'SandwichAuthToken';
+        $('.topBar').append(tokenInput);
+      });
     </script>
 </body>
 </html>

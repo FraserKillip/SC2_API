@@ -12,7 +12,12 @@ namespace SandwichClub.Api.Repositories
         public UserRepository(ScContext context, IMapper mapper) : base(context, mapper)
         {
         }
-        
+
+        public async Task<IEnumerable<User>> GetShoppersAsync()
+        {
+            return await ExecuteAsync(async (dbSet) => await dbSet.Where(u => u.Shopper == true).OrderBy(u => u.UserId).ToListAsync());
+        }
+
         public override async Task<IEnumerable<User>> GetByIdsAsync(IEnumerable<int> ids)
         {
             return await ExecuteAsync(async (dbSet) => await dbSet.Where(u => ids.Contains(u.UserId)).ToListAsync());

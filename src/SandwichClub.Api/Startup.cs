@@ -35,7 +35,7 @@ namespace SandwichClub.Api
                 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
                 .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
                 .AddEnvironmentVariables();
-            
+
             Configuration = builder.Build();
         }
 
@@ -104,16 +104,17 @@ namespace SandwichClub.Api
             }
 
             app.UseCors(builder => builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
+
+            app.UseGraphiQL(new GraphiQLOptions()
+            {
+                GraphiQLPath = "/graphiql"
+            });
+
             app.UseMiddleware<AuthorizationMiddleware>();
 
             app.UseGraphQL(new GraphQLOptions
             {
                 GraphQLPath = "/graphql" ,
-            });
-
-            app.UseGraphiQL(new GraphiQLOptions()
-            {
-                GraphiQLPath = "/graphiql"
             });
 
             app.UseMvc();

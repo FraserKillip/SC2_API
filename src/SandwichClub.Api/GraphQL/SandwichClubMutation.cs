@@ -7,7 +7,7 @@ using SandwichClub.Api.Services;
 
 namespace SandwichClub.Api.GraphQL {
     public class SandwichClubMutation : ObjectGraphType {
-        public SandwichClubMutation(IScSession session, IWeekUserLinkService weekUserLinkService, IWeekService weekService) {
+        public SandwichClubMutation(IScSession session, IUserService userService, IWeekUserLinkService weekUserLinkService, IWeekService weekService) {
 
             Name = "Mutation";
             FieldAsync<WeekType>(
@@ -15,17 +15,15 @@ namespace SandwichClub.Api.GraphQL {
                 arguments: new QueryArguments(
                     new QueryArgument<IntGraphType> { Name = "userId", Description = "UserId of the user" },
                     new QueryArgument<IntGraphType> { Name = "weekId", Description = "WeekId of the week" },
-                    new QueryArgument<IntGraphType> { Name = "slices", Description = "WeekId of the week" },
-                    new QueryArgument<FloatGraphType> { Name = "paid", Description = "WeekId of the week" }
+                    new QueryArgument<IntGraphType> { Name = "slices", Description = "WeekId of the week" }
                 ),
                 resolve: async context =>
                 {
                     var userId = context.GetArgument<int>("userId");
                     var weekId = context.GetArgument<int>("weekId");
                     var slices = context.GetArgument<int>("slices");
-                    var paid = context.GetArgument<float>("paid");
 
-                    return await weekService.SubscibeToWeek(weekId, userId, slices, paid);
+                    return await weekService.SubscibeToWeek(weekId, userId, slices);
                 }
             );
 
@@ -60,6 +58,32 @@ namespace SandwichClub.Api.GraphQL {
                         ShopperUserId = shopperId,
                         Cost = cost ?? 0,
                     });
+                }
+            );
+
+            Field<UserType>(
+                "updateMe",
+                arguments: new QueryArguments(
+                    new QueryArgument<StringGraphType> { Name = "bankName", Description = "The name of the users week bank" },
+                    new QueryArgument<StringGraphType> { Name = "bankDetails", Description = "Details for making payments" },
+                    new QueryArgument<BooleanGraphType> { Name = "shopper", Description = "Set as shopper" }
+                ),
+                resolve: (context) =>
+                {
+                    var user = session.CurrentUser;
+
+                    var bankName = context.GetArgument<string>("bankName");
+                    var bankDetails = context.GetArgument<string>("bankDetails");
+                    var shopper = context.GetArgument<bool?>("shopper");
+
+                    if (bankName != null)
+                        user.BankName = bankName;
+                    if (bankDetails != null)
+                        user.BankDetails = bankDetails;
+                    if (shopper != null)
+                        user.Shopper = shopper.Value;
+
+                    return userService.SaveAsync(user);
                 }
             );
         }
