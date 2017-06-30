@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using System;
+using Microsoft.AspNetCore.Http;
 using SandwichClub.Api.Repositories.Models;
 
 namespace SandwichClub.Api.Services
@@ -13,6 +14,8 @@ namespace SandwichClub.Api.Services
             get { return _context.Items[CurrentUserKey] as User; }
             set { _context.Items[CurrentUserKey] = value; }
         }
+
+        public bool InvalidToken { get; set; }
 
         public IScSession WithContext(HttpContext context)
         {
