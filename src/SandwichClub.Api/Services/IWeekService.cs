@@ -14,7 +14,7 @@ namespace SandwichClub.Api.Services
 
         Task<decimal> GetAmountToPayPerPersonAsync(int weekId);
 
-        Task<IEnumerable<WeekUserLink>> MarkAllLinksAsPaidForUserAsync(int userId);
+        Task<WeekUserLink> MarkAllLinksAsPaidForUserAsync(int userId);
 
         /// <summary>
         /// Gets the id of a week for the given date
