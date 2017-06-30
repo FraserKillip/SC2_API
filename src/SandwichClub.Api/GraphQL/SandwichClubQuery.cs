@@ -9,63 +9,64 @@ namespace SandwichClub.Api.GraphQL {
         public SandwichClubQuery(IScSession session, IUserService userService, IWeekService weekService, IWeekUserLinkService weekUserLinkService) {
 
             Name = "Query";
-            Field<UserType>(
+            FieldAsync<UserType>(
                 "me",
-                resolve: context => {
-                    return userService.GetByIdAsync((session.CurrentUser?.UserId).Value);
+                resolve: async context => {
+                    return await userService.GetByIdAsync((session.CurrentUser?.UserId).Value);
                 }
             );
 
-            Field<ListGraphType<UserType>>(
+            FieldAsync<ListGraphType<UserType>>(
                 "users",
-                resolve: context => userService.GetAsync()
+                resolve: async context => await userService.GetAsync()
             );
 
-            Field<UserType>(
+            FieldAsync<UserType>(
                 "user",
                 arguments: new QueryArguments(
                     new QueryArgument<IntGraphType> { Name = "userId", Description = "UserId of the user" },
                     new QueryArgument<StringGraphType> { Name = "facebookId", Description = "FacebookId of the user" }
                 ),
-                resolve: context => {
+                resolve: async context =>
+                {
                     var userId = context.GetArgument<int?>("userId");
-                    if (userId != null) return userService.GetByIdAsync(userId.Value);
+                    if (userId != null) return await userService.GetByIdAsync(userId.Value);
                     var socialId = context.GetArgument<string>("facebookId");
-                    if (socialId != null) return userService.GetBySocialId(socialId);
+                    if (socialId != null) return await userService.GetBySocialId(socialId);
                     return null;
                 }
             );
 
-            Field<WeekType>(
+            FieldAsync<WeekType>(
                 "thisweek",
-                resolve: context => weekService.GetCurrentWeekAsync()
+                resolve: async context => await weekService.GetCurrentWeekAsync()
             );
 
-            Field<ListGraphType<WeekType>>(
+            FieldAsync<ListGraphType<WeekType>>(
                 "weeks",
-                resolve: context => weekService.GetAsync()
+                resolve: async context => await weekService.GetAsync()
             );
 
-            Field<WeekType>(
+            FieldAsync<WeekType>(
                 "week",
                 arguments: new QueryArguments(
                     new QueryArgument<IntGraphType> { Name = "weekId", Description = "WeekId of the user" }
                 ),
-                resolve: context => {
+                resolve: async context => {
                     var weekId = context.GetArgument<int?>("weekId");
-                    if (weekId != null) return weekService.GetByIdAsync(weekId.Value);
+                    if (weekId != null) return await weekService.GetByIdAsync(weekId.Value);
                     return null;
                 }
             );
 
-            Field<WeekUserLinkType>(
+            FieldAsync<WeekUserLinkType>(
                 "weekLink",
                 arguments: new QueryArguments(
                     new QueryArgument<IntGraphType> { Name = "weekId", Description = "WeekId of the user" }
                 ),
-                resolve: context => {
+                resolve: async context => {
                     var weekId = context.GetArgument<int>("weekId");
-                    return weekUserLinkService.GetByIdAsync(new WeekUserLinkId { WeekId = weekId, UserId = (session.CurrentUser?.UserId).Value});
+                    return await weekUserLinkService.GetByIdAsync(new WeekUserLinkId { WeekId = weekId, UserId = (session.CurrentUser?.UserId).Value});
                 }
             );
         }

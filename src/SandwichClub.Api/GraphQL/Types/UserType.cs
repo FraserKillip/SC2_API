@@ -20,19 +20,21 @@ namespace SandwichClub.Api.GraphQL.Types {
             Field<StringGraphType>("bankName", "The BankName of the user");
             Field<BooleanGraphType>("firstLogin", "Whether the user is logging in for the first time");
 
-            Field<DecimalGraphType>("totalCost", "The sum of all week costs for weeks the user is signed up to", resolve: context => weekService.GetTotalCostsForUserAsync(((User) context.Source).UserId));
-            Field<DecimalGraphType>("totalPaid", "The sum of amounts paid for all weeks", resolve: context => weekUserLinkService.GetSumPaidForUserAsync(((User) context.Source).UserId));
+            FieldAsync<DecimalGraphType>("totalCost", "The sum of all week costs for weeks the user is signed up to", resolve: async context => await weekService.GetTotalCostsForUserAsync(((User)context.Source).UserId));
+            FieldAsync<DecimalGraphType>("totalPaid", "The sum of amounts paid for all weeks", resolve: async context => await weekUserLinkService.GetSumPaidForUserAsync(((User)context.Source).UserId));
 
-            Field<ListGraphType<WeekUserLinkType>>("weeks", "The users joined weeks",
+            FieldAsync<ListGraphType<WeekUserLinkType>>("weeks", "The users joined weeks",
                 arguments: new QueryArguments(
                     new QueryArgument<BooleanGraphType> { Name = "unpaidOnly", Description = "Include only unpaid weeks" }
                 ),
-                resolve: context => {
-                var unpaidOnly = context.GetArgument<bool?>("unpaidOnly");
-                if (unpaidOnly.HasValue && unpaidOnly.Value) {
-                    return weekUserLinkService.GetByUserIdAsync(((User) context.Source).UserId, true);
-                }
-                return weekUserLinkService.GetByUserIdAsync(((User) context.Source).UserId);
+                resolve: async context =>
+                {
+                    var unpaidOnly = context.GetArgument<bool?>("unpaidOnly");
+                    if (unpaidOnly.HasValue && unpaidOnly.Value)
+                    {
+                        return await weekUserLinkService.GetByUserIdAsync(((User)context.Source).UserId, true);
+                    }
+                    return await weekUserLinkService.GetByUserIdAsync(((User)context.Source).UserId);
                 });
             IsTypeOf = value => value is User;
         }
