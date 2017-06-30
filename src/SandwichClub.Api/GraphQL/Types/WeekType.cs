@@ -12,10 +12,10 @@ namespace SandwichClub.Api.GraphQL.Types {
             Field<IntGraphType>("shopperUserId", "THe weeks shopper");
             Field<DecimalGraphType>("cost", "The Cost of the week");
 
-            Field<DecimalGraphType>("costPerUser", "The amount owed per user", resolve: context => weekService.GetAmountToPayPerPersonAsync(((Week) context.Source).WeekId));
+            FieldAsync<DecimalGraphType>("costPerUser", "The amount owed per user", resolve: async context => await weekService.GetAmountToPayPerPersonAsync(((Week)context.Source).WeekId));
 
-            Field<ListGraphType<WeekUserLinkType>>("users", resolve: context =>  weekUserLinkService.GetByWeekIdAsync(((Week) context.Source).WeekId));
-            Field<UserType>("shopper", resolve: context =>  ((Week) context.Source).ShopperUserId.HasValue ? userService.GetByIdAsync(((Week) context.Source).ShopperUserId.Value) : null);
+            FieldAsync<ListGraphType<WeekUserLinkType>>("users", resolve: async context => await weekUserLinkService.GetByWeekIdAsync(((Week)context.Source).WeekId));
+            FieldAsync<UserType>("shopper", resolve: async context => ((Week)context.Source).ShopperUserId.HasValue ? await userService.GetByIdAsync(((Week)context.Source).ShopperUserId.Value) : null);
 
             IsTypeOf = value => value is Week;
         }

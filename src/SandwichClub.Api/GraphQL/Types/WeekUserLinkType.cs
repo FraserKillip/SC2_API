@@ -13,8 +13,8 @@ namespace SandwichClub.Api.GraphQL.Types {
         Field<IntGraphType>("slices", "The slices taken.");
         Field<DecimalGraphType>("paid", "The amount paid");
 
-        Field<UserType>("user", "The user for the link", resolve: context => userService.GetByIdAsync(((WeekUserLink) context.Source).UserId));
-        Field<WeekType>("week", "The week for the link", resolve: context => weekService.GetByIdAsync(((WeekUserLink) context.Source).WeekId));
+        FieldAsync<UserType>("user", "The user for the link", resolve: async context => await userService.GetByIdAsync(((WeekUserLink)context.Source).UserId));
+        FieldAsync<WeekType>("week", "The week for the link", resolve: async context => await weekService.GetByIdAsync(((WeekUserLink)context.Source).WeekId));
 
         IsTypeOf = value => value is WeekUserLink;
       }
