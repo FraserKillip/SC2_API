@@ -120,7 +120,7 @@ namespace SandwichClub.Api.Tests.Services
             public void GetWeekId_GivenStartOfComputerTime_IdShouldBeZero()
             {
                 // When
-                var weekId = Service.GetWeekId(new DateTime(1970, 1, 5));
+                var weekId = Service.GetWeekId(StartOfComputerTime);
 
                 // Verify
                 Assert.Equal(0, weekId);
