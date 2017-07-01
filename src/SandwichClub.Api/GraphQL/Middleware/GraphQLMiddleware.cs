@@ -12,6 +12,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json.Linq;
 using GraphQL.Validation;
 using System.Linq;
+using SandwichClub.Api.Services;
 
 namespace GraphQL.Middleware
 {
@@ -73,11 +74,12 @@ namespace GraphQL.Middleware
             }
 
             var schema = context.RequestServices.GetService<SandwichClubSchema>();
+            var session = context.RequestServices.GetService<IScSession>();
             var graphqlAuthenticationValidator = context.RequestServices.GetService<IGraphQLAuthenticationValidator>();
 
             if (ShouldRespondToRequest(context.Request))
             {
-                var executionResult = await ExecuteAsync(context.Request, schema, graphqlAuthenticationValidator).ConfigureAwait(true);
+                var executionResult = await ExecuteAsync(context.Request, schema, session, graphqlAuthenticationValidator).ConfigureAwait(true);
                 await WriteResponseAsync(context.Response , executionResult).ConfigureAwait(true);
                 return;
             }
@@ -85,7 +87,7 @@ namespace GraphQL.Middleware
             await next(context).ConfigureAwait(true);
         }
 
-        private async Task<ExecutionResult> ExecuteAsync(HttpRequest request, ISchema schema, IGraphQLAuthenticationValidator _graphqlAuthenticationValidator)
+        private async Task<ExecutionResult> ExecuteAsync(HttpRequest request, ISchema schema, IScSession session, IGraphQLAuthenticationValidator _graphqlAuthenticationValidator)
         {
             string requestBodyText;
             using (var streamReader = new StreamReader(request.Body))
@@ -103,9 +105,10 @@ namespace GraphQL.Middleware
             var result = await new DocumentExecuter().ExecuteAsync(new ExecutionOptions
             {
                 Schema = schema,
-                Query = graphqlRequest.Query,
-                OperationName = graphqlRequest.OperationName,
-                Inputs = graphqlRequest.Variables.ToInputs(),
+                Query = o["query"]?.ToString(),
+                OperationName = o["operationName"]?.ToString(),
+                Inputs = o["variables"]?.ToString().ToInputs(),
+                UserContext = session,
                 ValidationRules = (new [] { _graphqlAuthenticationValidator }).Concat(DocumentValidator.CoreRules())
             }).ConfigureAwait(true);
 

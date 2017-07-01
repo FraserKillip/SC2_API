@@ -7,21 +7,16 @@ namespace SandwichClub.Api.GraphQL
 {
     public class GraphQLAuthenticationValidator : IGraphQLAuthenticationValidator
     {
-        private readonly IScSession _session;
-
-        public GraphQLAuthenticationValidator(IScSession session)
-        {
-            _session = session;
-        }
-
         public INodeVisitor Validate(ValidationContext context)
         {
+            var session = context.UserContext as IScSession;
+
             return new EnterLeaveListener(_ =>
             {
                 _.Match<Operation>(op =>
                 {
                     // User is authenticated
-                    if (_session.CurrentUser != null)
+                    if (session.CurrentUser != null)
                         return;
 
                     // Allow internal field access
@@ -32,7 +27,7 @@ namespace SandwichClub.Api.GraphQL
                     context.ReportError(new ValidationError(
                         context.OriginalQuery,
                         "auth-required",
-                        _session.InvalidToken ? "Invalid Sandwich-Auth-Token header" : "Missing Sandwich-Auth-Token header"));
+                        session.InvalidToken ? "Invalid Sandwich-Auth-Token header" : "Missing Sandwich-Auth-Token header"));
                 });
             });
         }
