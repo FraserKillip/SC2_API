@@ -35,13 +35,13 @@ namespace SandwichClub.Api.Tests.Services
                     .Returns((int id) => Task.FromResult(_weekLinks.Count(_ => _.WeekId == id)));
             }
 
-            public void AddWeekLinks(int number)
+			internal void AddWeekLinks(int number)
             {
                 for (var i = 0; i < number; ++i)
                     _weekLinks.Add(new WeekUserLink { WeekId = WeekId, UserId = i });
             }
 
-            public void AddWeekLinks(int number, int weekId)
+			internal void AddWeekLinks(int number, int weekId)
             {
                 for (var i = 0; i < number; ++i)
                     _weekLinks.Add(new WeekUserLink { WeekId = weekId, UserId = i });
