@@ -7,6 +7,8 @@ namespace SandwichClub.Api.Services
     {
         User CurrentUser { get; set; }
 
+        bool InvalidToken { get; set; }
+
         IScSession WithContext(HttpContext context);
     }
 }

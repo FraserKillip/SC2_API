@@ -68,6 +68,8 @@ namespace SandwichClub.Api
             services.AddScoped<IWeekUserLinkService, WeekUserLinkService>();
             services.AddScoped<IMapper<WeekUserLink, WeekUserLinkDto>, WeekUserLinkMapper>();
 
+            services.AddScoped<IGraphQLAuthenticationValidator, GraphQLAuthenticationValidator>();
+
             services.AddScoped<UserType>();
             services.AddScoped<WeekType>();
             services.AddScoped<WeekUserLinkType>();
@@ -76,7 +78,7 @@ namespace SandwichClub.Api
             services.AddScoped<SandwichClubSchema>((sp) => new SandwichClubSchema(type => (GraphType) sp.GetService(type)));
 
             // Configs
-            services.Configure<AuthorizationMiddlewareConfig>(Configuration);
+            services.Configure<AuthenticationMiddlewareConfig>(Configuration);
             services.AddOptions();
 
             // Add framework services.
@@ -110,12 +112,14 @@ namespace SandwichClub.Api
                 GraphiQLPath = "/graphiql"
             });
 
-            app.UseMiddleware<AuthorizationMiddleware>();
+            app.UseMiddleware<AuthenticationMiddleware>();
 
             app.UseGraphQL(new GraphQLOptions
             {
                 GraphQLPath = "/graphql" ,
             });
+
+            app.UseMiddleware<AuthorizationMiddleware>();
 
             app.UseMvc();
         }

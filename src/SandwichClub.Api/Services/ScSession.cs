@@ -14,6 +14,8 @@ namespace SandwichClub.Api.Services
             set { _context.Items[CurrentUserKey] = value; }
         }
 
+        public bool InvalidToken { get; set; }
+
         public IScSession WithContext(HttpContext context)
         {
             _context = context;
