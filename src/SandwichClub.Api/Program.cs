@@ -18,6 +18,7 @@ namespace SandwichClub.Api
                 .Build();
 
             var host = new WebHostBuilder()
+                .UseApplicationInsights()
                 .UseKestrel()
                 .UseContentRoot(Directory.GetCurrentDirectory())
                 .UseConfiguration(config)
