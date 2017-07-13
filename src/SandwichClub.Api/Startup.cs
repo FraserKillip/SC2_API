@@ -21,6 +21,8 @@ using SandwichClub.Api.GraphQL;
 using SandwichClub.Api.GraphQL.Types;
 using System;
 using System.IO;
+using Microsoft.ApplicationInsights;
+using Microsoft.Extensions.Logging.Console;
 
 namespace SandwichClub.Api
 {
@@ -86,11 +88,10 @@ namespace SandwichClub.Api
             services.AddMvc().AddJsonOptions(options => {
                 options.SerializerSettings.ContractResolver = new DefaultContractResolver();
             });
-
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, TelemetryClient telemetryClient)
         {
             // Migrate the database
             var context = app.ApplicationServices.GetService<ScContext>();
@@ -99,6 +100,7 @@ namespace SandwichClub.Api
 
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
+            loggerFactory.AddProvider(new SqlDependencyLogProvider(telemetryClient));
 
             if (env.IsDevelopment())
             {
