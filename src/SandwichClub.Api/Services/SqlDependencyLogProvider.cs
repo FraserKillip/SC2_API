@@ -60,7 +60,8 @@ namespace SandwichClub.Api.Services
             var elapsedMs = Convert.ToInt32(dataList["elapsed"]);
             var commandText = dataList["commandText"].ToString();
 
-            if (string.IsNullOrEmpty(commandText))
+            // Ignore empty sql, or Pragma commands
+            if (string.IsNullOrEmpty(commandText) || commandText.StartsWith("PRAGMA "))
                 return;
 
             var dependencyTelemetry = new DependencyTelemetry
