@@ -7,7 +7,7 @@
     <OutputType>Exe</OutputType>
     <PackageId>SandwichClub.Api</PackageId>
     <NetStandardImplicitPackageVersion>1.6.0</NetStandardImplicitPackageVersion>
-    <RuntimeFrameworkVersion>1.0.4</RuntimeFrameworkVersion>
+    <RuntimeFrameworkVersion>2.0.0-preview2-25407-01</RuntimeFrameworkVersion>
   </PropertyGroup>
 
   <ItemGroup>
