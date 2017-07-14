@@ -104,18 +104,15 @@ namespace SandwichClub.Api.Repositories
             return (await Task.WhenAll(items)).Where(e => e != null);
         }
 
-        protected EntityEntry<T> Entry(T t)
+        private EntityEntry<T> Entry(T t)
         {
-            return Execute((context, dbSet) =>
+            var entry = _context.ChangeTracker.Entries<T>().FirstOrDefault(e => t.Equals(e.Entity));
+            if (entry != null)
             {
-                var entry = context.ChangeTracker.Entries<T>().Where(e => t.Equals(e.Entity)).FirstOrDefault();
-                if (entry != null)
-                {
-                    Mapper.Map<T, T>(t, entry.Entity);
-                    return entry;
-                }
-                return context.Attach<T>(t);
-            });
+                Mapper.Map<T, T>(t, entry.Entity);
+                return entry;
+            }
+            return _context.Attach<T>(t);
         }
 
         public async Task<IEnumerable<T>> GetAsync()
@@ -130,9 +127,10 @@ namespace SandwichClub.Api.Repositories
         {
             return await ExecuteAsync(async (context, dbSet) =>
             {
+                //this.Get
                 var entry = Entry(t);
-                if (entry.State != EntityState.Unchanged)
-                    throw new DatabaseException("Can't insert entity which already exists");
+                if (entry.State != EntityState.Added && entry.State != EntityState.Unchanged)
+                    throw new DatabaseException("Can't insert an entity which already exists");
                 entry.State = EntityState.Added;
                 await context.SaveChangesAsync();
                 return entry.Entity;
