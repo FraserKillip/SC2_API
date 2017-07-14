@@ -60,15 +60,12 @@ namespace SandwichClub.Api
 
             services.AddScoped<IWeekRepository, WeekRepository>();
             services.AddScoped<IWeekService, WeekService>();
-            services.AddScoped<IMapper<Week, WeekDto>, WeekMapper>();
 
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IUserService, UserService>();
-            services.AddScoped<IMapper<User, UserDto>, UserMapper>();
 
             services.AddScoped<IWeekUserLinkRepository, WeekUserLinkRepository>();
             services.AddScoped<IWeekUserLinkService, WeekUserLinkService>();
-            services.AddScoped<IMapper<WeekUserLink, WeekUserLinkDto>, WeekUserLinkMapper>();
 
             services.AddScoped<IGraphQLAuthenticationValidator, GraphQLAuthenticationValidator>();
 
