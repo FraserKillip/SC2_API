@@ -6,10 +6,8 @@ using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using SandwichClub.Api.Controllers.Mapper;
 using SandwichClub.Api.Repositories;
 using SandwichClub.Api.Services;
-using SandwichClub.Api.Dto;
 using SandwichClub.Api.Middleware;
 using SandwichClub.Api.Repositories.Models;
 using Newtonsoft.Json.Serialization;
@@ -60,15 +58,12 @@ namespace SandwichClub.Api
 
             services.AddScoped<IWeekRepository, WeekRepository>();
             services.AddScoped<IWeekService, WeekService>();
-            services.AddScoped<IMapper<Week, WeekDto>, WeekMapper>();
 
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IUserService, UserService>();
-            services.AddScoped<IMapper<User, UserDto>, UserMapper>();
 
             services.AddScoped<IWeekUserLinkRepository, WeekUserLinkRepository>();
             services.AddScoped<IWeekUserLinkService, WeekUserLinkService>();
-            services.AddScoped<IMapper<WeekUserLink, WeekUserLinkDto>, WeekUserLinkMapper>();
 
             services.AddScoped<IGraphQLAuthenticationValidator, GraphQLAuthenticationValidator>();
 
