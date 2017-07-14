@@ -8,6 +8,11 @@ namespace SandwichClub.Api.GraphQL {
         public SandwichClubQuery(IScSession session, IUserService userService, IWeekService weekService, IWeekUserLinkService weekUserLinkService) {
 
             Name = "Query";
+
+            Field<StringGraphType>(
+                "version",
+                resolve: context => typeof(SandwichClubQuery).Assembly.GetName().Version.ToString());
+
             FieldAsync<UserType>(
                 "me",
                 resolve: async context => {
