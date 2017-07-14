@@ -109,10 +109,10 @@ namespace SandwichClub.Api.Repositories
             var entry = _context.ChangeTracker.Entries<T>().FirstOrDefault(e => t.Equals(e.Entity));
             if (entry != null)
             {
-                Mapper.Map<T, T>(t, entry.Entity);
+                Mapper.Map(t, entry.Entity);
                 return entry;
             }
-            return _context.Attach<T>(t);
+            return _context.Attach(t);
         }
 
         public async Task<IEnumerable<T>> GetAsync()

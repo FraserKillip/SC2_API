@@ -1,13 +1,14 @@
-using System;
-using System.Threading.Tasks;
 using GraphQL.Types;
 using SandwichClub.Api.GraphQL.Types;
 using SandwichClub.Api.Repositories.Models;
 using SandwichClub.Api.Services;
 
-namespace SandwichClub.Api.GraphQL {
-    public class SandwichClubMutation : ObjectGraphType {
-        public SandwichClubMutation(IScSession session, IUserService userService, IWeekUserLinkService weekUserLinkService, IWeekService weekService) {
+namespace SandwichClub.Api.GraphQL
+{
+    public class SandwichClubMutation : ObjectGraphType
+    {
+        public SandwichClubMutation(IScSession session, IUserService userService, IWeekUserLinkService weekUserLinkService, IWeekService weekService)
+        {
 
             Name = "Mutation";
             FieldAsync<WeekType>(
@@ -47,7 +48,8 @@ namespace SandwichClub.Api.GraphQL {
                     new QueryArgument<IntGraphType> { Name = "shopperId", Description = "UserId of the shopper" },
                     new QueryArgument<FloatGraphType> { Name = "cost", Description = "cost of the week" }
                 ),
-                resolve: async context => {
+                resolve: async context =>
+                {
                     var shopperId = context.GetArgument<int?>("shopperId");
                     var weekId = context.GetArgument<int>("weekId");
                     var cost = context.GetArgument<float?>("cost");

@@ -2,7 +2,6 @@ using AutoMapper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -11,16 +10,12 @@ using SandwichClub.Api.Services;
 using SandwichClub.Api.Middleware;
 using SandwichClub.Api.Repositories.Models;
 using Newtonsoft.Json.Serialization;
-using System.Reflection;
-using System.Linq;
-using GraphQL.Middleware;
 using GraphQL.Types;
 using SandwichClub.Api.GraphQL;
 using SandwichClub.Api.GraphQL.Types;
 using System;
-using System.IO;
 using Microsoft.ApplicationInsights;
-using Microsoft.Extensions.Logging.Console;
+using SandwichClub.Api.GraphQL.Middleware;
 
 namespace SandwichClub.Api
 {
@@ -51,7 +46,7 @@ namespace SandwichClub.Api
             services.AddDbContext<ScContext>(options => options.UseSqlite(cs).UseMemoryCache(null));
 
             InitializeAutoMapper();
-            services.AddSingleton<IMapper>(Mapper.Instance);
+            services.AddSingleton(Mapper.Instance);
 
             services.AddTransient<IAuthorisationService, FacebookAuthorisationService>();
             services.AddScoped<IScSession, ScSession>();
@@ -72,7 +67,7 @@ namespace SandwichClub.Api
             services.AddScoped<WeekUserLinkType>();
             services.AddScoped<SandwichClubQuery>();
             services.AddScoped<SandwichClubMutation>();
-            services.AddScoped<SandwichClubSchema>((sp) => new SandwichClubSchema(type => (GraphType) sp.GetService(type)));
+            services.AddScoped((sp) => new SandwichClubSchema(type => (GraphType) sp.GetService(type)));
 
             // Configs
             services.Configure<AuthenticationMiddlewareConfig>(Configuration);

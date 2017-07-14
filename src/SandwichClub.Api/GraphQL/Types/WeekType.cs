@@ -2,7 +2,8 @@ using GraphQL.Types;
 using SandwichClub.Api.Repositories.Models;
 using SandwichClub.Api.Services;
 
-namespace SandwichClub.Api.GraphQL.Types {
+namespace SandwichClub.Api.GraphQL.Types
+{
     public class WeekType : ObjectGraphType
     {
         public WeekType(IWeekService weekService, IWeekUserLinkService weekUserLinkService, IUserService userService)

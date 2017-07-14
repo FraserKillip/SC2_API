@@ -1,20 +1,18 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
+using GraphQL;
 using GraphQL.Http;
 using GraphQL.Types;
-using GraphQL;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Options;
-using Newtonsoft.Json;
-using SandwichClub.Api.GraphQL;
-using Microsoft.Extensions.DependencyInjection;
-using Newtonsoft.Json.Linq;
 using GraphQL.Validation;
-using System.Linq;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
+using Newtonsoft.Json.Linq;
 using SandwichClub.Api.Services;
 
-namespace GraphQL.Middleware
+namespace SandwichClub.Api.GraphQL.Middleware
 {
     /// <summary>
     ///     Provides middleware for hosting GraphQL.

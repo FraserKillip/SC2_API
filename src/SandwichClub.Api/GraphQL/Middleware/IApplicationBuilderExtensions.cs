@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
-//using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Options;
+//using Microsoft.AspNetCore.Builder;
 
-namespace GraphQL.Middleware
+namespace SandwichClub.Api.GraphQL.Middleware
 {
     /// <summary>
     ///     Extension methods for using GraphiQL with <see cref="IApplicationBuilder" />.

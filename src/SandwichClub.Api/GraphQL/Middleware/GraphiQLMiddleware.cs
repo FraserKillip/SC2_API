@@ -1,12 +1,10 @@
 ﻿using System;
-using System.IO;
-using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 
-namespace GraphQL.Middleware
+namespace SandwichClub.Api.GraphQL.Middleware
 {
     /// <summary>
     ///     Provides middleware to display GraphiQL.

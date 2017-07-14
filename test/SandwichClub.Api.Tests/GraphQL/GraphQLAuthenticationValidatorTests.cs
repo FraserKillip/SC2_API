@@ -3,7 +3,6 @@ using GraphQL.Validation;
 using SandwichClub.Api.GraphQL;
 using SandwichClub.Api.Repositories.Models;
 using SandwichClub.Api.Services;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace SandwichClub.Api.Tests.GraphQL

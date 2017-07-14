@@ -3,10 +3,12 @@ using SandwichClub.Api.GraphQL.Types;
 using SandwichClub.Api.Repositories.Models;
 using SandwichClub.Api.Services;
 
-namespace SandwichClub.Api.GraphQL {
-    public class SandwichClubQuery : ObjectGraphType {
-        public SandwichClubQuery(IScSession session, IUserService userService, IWeekService weekService, IWeekUserLinkService weekUserLinkService) {
-
+namespace SandwichClub.Api.GraphQL
+{
+    public class SandwichClubQuery : ObjectGraphType
+    {
+        public SandwichClubQuery(IScSession session, IUserService userService, IWeekService weekService, IWeekUserLinkService weekUserLinkService)
+        {
             Name = "Query";
 
             Field<StringGraphType>(
@@ -15,7 +17,8 @@ namespace SandwichClub.Api.GraphQL {
 
             FieldAsync<UserType>(
                 "me",
-                resolve: async context => {
+                resolve: async context =>
+                {
                     return await userService.GetByIdAsync((session.CurrentUser?.UserId).Value);
                 }
             );
@@ -65,7 +68,8 @@ namespace SandwichClub.Api.GraphQL {
                 arguments: new QueryArguments(
                     new QueryArgument<IntGraphType> { Name = "weekId", Description = "WeekId of the user" }
                 ),
-                resolve: async context => {
+                resolve: async context =>
+                {
                     var weekId = context.GetArgument<int?>("weekId");
                     if (weekId != null) return await weekService.GetByIdAsync(weekId.Value);
                     return null;
@@ -77,9 +81,10 @@ namespace SandwichClub.Api.GraphQL {
                 arguments: new QueryArguments(
                     new QueryArgument<IntGraphType> { Name = "weekId", Description = "WeekId of the user" }
                 ),
-                resolve: async context => {
+                resolve: async context =>
+                {
                     var weekId = context.GetArgument<int>("weekId");
-                    return await weekUserLinkService.GetByIdAsync(new WeekUserLinkId { WeekId = weekId, UserId = (session.CurrentUser?.UserId).Value});
+                    return await weekUserLinkService.GetByIdAsync(new WeekUserLinkId { WeekId = weekId, UserId = (session.CurrentUser?.UserId).Value });
                 }
             );
         }

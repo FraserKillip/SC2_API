@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Reflection;
 using Moq;
 
 namespace SandwichClub.Api.Tests
@@ -43,7 +42,7 @@ namespace SandwichClub.Api.Tests
 
         public void RegisterInstance<T>(T instance)
         {
-            RegisterInstance<T>(instance, typeof(T));
+            RegisterInstance(instance, typeof(T));
         }
 
         public void RegisterInstance<T>(T instance, Type asType)
