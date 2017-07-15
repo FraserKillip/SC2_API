@@ -90,7 +90,7 @@ namespace SandwichClub.Api
 
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
-            loggerFactory.AddProvider(new SqlDependencyLogProvider(telemetryClient));
+            loggerFactory.AddProvider(new SqlDependencyLogProvider(Configuration.GetConnectionString("Database"), telemetryClient));
 
             if (env.IsDevelopment())
             {

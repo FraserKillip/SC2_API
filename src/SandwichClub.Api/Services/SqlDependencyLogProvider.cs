@@ -11,10 +11,12 @@ namespace SandwichClub.Api.Services
 {
     public class SqlDependencyLogProvider : ILoggerProvider
     {
+        private readonly string _databaseTarget;
         private readonly TelemetryClient _telemetryClient;
 
-        public SqlDependencyLogProvider(TelemetryClient telemetryClient)
+        public SqlDependencyLogProvider(string databaseTarget, TelemetryClient telemetryClient)
         {
+            _databaseTarget = databaseTarget;
             _telemetryClient = telemetryClient;
         }
 
@@ -25,17 +27,19 @@ namespace SandwichClub.Api.Services
         public ILogger CreateLogger(string categoryName)
         {
             if (categoryName == "Microsoft.EntityFrameworkCore.Database.Command")
-                return new SqlDependencyLogger(_telemetryClient);
+                return new SqlDependencyLogger(_databaseTarget, _telemetryClient);
             return NullLogger.Instance;
         }
     }
 
     public class SqlDependencyLogger : ILogger
     {
+        private readonly string _databaseTarget;
         private readonly TelemetryClient _telemetryClient;
 
-        public SqlDependencyLogger(TelemetryClient telemetryClient)
+        public SqlDependencyLogger(string databaseTarget, TelemetryClient telemetryClient)
         {
+            _databaseTarget = databaseTarget;
             _telemetryClient = telemetryClient;
         }
 
@@ -64,11 +68,12 @@ namespace SandwichClub.Api.Services
             var dependencyTelemetry = new DependencyTelemetry
             {
                 Type = "SQL",
+                Target = _databaseTarget,
                 Name = commandText,
                 Timestamp = DateTimeOffset.Now,
                 Duration = TimeSpan.FromMilliseconds(elapsedMs),
                 Success = exception == null,
-                ResultCode = exception != null ? "0" : "?",
+                ResultCode = exception == null ? "0" : "?",
             };
 
             _telemetryClient.TrackDependency(dependencyTelemetry);
