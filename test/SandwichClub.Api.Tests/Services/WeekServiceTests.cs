@@ -33,6 +33,10 @@ namespace SandwichClub.Api.Tests.Services
                     .Returns((int id, bool ignore) => Task.FromResult(_weekLinks.Where(_ => _.UserId == id)));
                 Mock<IWeekUserLinkService>().Setup(i => i.CountForWeekAsync(It.IsAny<int>()))
                     .Returns((int id) => Task.FromResult(_weekLinks.Count(_ => _.WeekId == id)));
+
+                Mock<IUserService>().Setup(i => i.GetByIdAsync(It.IsAny<int>()))
+                    .Returns((int id) => Task.FromResult(new User {UserId = id}));
+                Mock<ITelemetryService>().Setup(i => i.TrackEvent(It.IsAny<string>(), It.IsAny<object>()));
             }
 
 			internal void AddWeekLinks(int number)
