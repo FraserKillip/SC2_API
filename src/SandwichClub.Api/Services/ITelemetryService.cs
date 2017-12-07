@@ -2,6 +2,6 @@
 {
     public interface ITelemetryService
     {
-        void TrackEvent(string eventName, object customProperties)
+        void TrackEvent(string eventName, object customProperties);
     }
 }
