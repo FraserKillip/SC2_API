@@ -7,7 +7,7 @@ namespace SandwichClub.Api.GraphQL
 {
     public class SandwichClubMutation : ObjectGraphType
     {
-        public SandwichClubMutation(IScSession session, IUserService userService, IWeekUserLinkService weekUserLinkService, IWeekService weekService)
+        public SandwichClubMutation(IScSession session, IUserService userService, IWeekService weekService, ITelemetryService telemetryService)
         {
 
             Name = "Mutation";
@@ -23,6 +23,9 @@ namespace SandwichClub.Api.GraphQL
                     var userId = context.GetArgument<int>("userId");
                     var weekId = context.GetArgument<int>("weekId");
                     var slices = context.GetArgument<int>("slices");
+
+                    telemetryService.TrackEvent(slices > 0 ? "weekSubscription" : "weekUnsubscription",
+                        new {userId, weekId});
 
                     return await weekService.SubscibeToWeek(weekId, userId, slices);
                 }
