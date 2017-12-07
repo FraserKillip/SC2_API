@@ -21,6 +21,7 @@ namespace SandwichClub.Api.Repositories
             builder.Entity<Week>().HasKey(w => w.WeekId);
             builder.Entity<User>().HasKey(u => u.UserId);
             builder.Entity<WeekUserLink>().HasKey(wu => new { wu.WeekId, wu.UserId });
+            builder.Entity<Payment>().HasKey(p => p.Id);
             base.OnModelCreating(builder);
         }
     }
