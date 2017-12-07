@@ -10,10 +10,14 @@ namespace SandwichClub.Api.Services
     public class WeekService : SaveOnlyBaseService<int, Week, IWeekRepository>, IWeekService
     {
         private readonly IWeekUserLinkService _weekUserLinkService;
+        private readonly IUserService _userService;
+        private readonly ITelemetryService _telemetryService;
 
-        public WeekService(IWeekRepository weekRepository, ILogger<WeekService> logger, IWeekUserLinkService weekUserLinkService) : base(weekRepository, logger)
+        public WeekService(IWeekRepository weekRepository, ILogger<WeekService> logger, IWeekUserLinkService weekUserLinkService, ITelemetryService telemetryService, IUserService userService) : base(weekRepository, logger)
         {
             _weekUserLinkService = weekUserLinkService;
+            _telemetryService = telemetryService;
+            _userService = userService;
         }
 
         /// <summary>
@@ -68,6 +72,7 @@ namespace SandwichClub.Api.Services
 
             var currentWeekId = GetWeekId(DateTime.Now);
 
+            var remainingOwed = amountOwed;
             foreach (var week in unpaidWeeks)
             {
                 if (week.WeekId >= currentWeekId)
@@ -76,22 +81,33 @@ namespace SandwichClub.Api.Services
                 // Get the $$$
                 var amountToPay = await GetAmountToPayPerPersonAsync(week.WeekId);
                 // Make sure we don't overpay
-                if (amountOwed - amountToPay <= 0)
+                if (remainingOwed - amountToPay <= 0)
                 {
-                    amountToPay = amountOwed;
-                    amountOwed = 0;
+                    amountToPay = remainingOwed;
+                    remainingOwed = 0;
                 }
                 else
                 {
-                    amountOwed -= amountToPay;
+                    remainingOwed -= amountToPay;
                 }
                 week.Paid = (double) amountToPay;
                 // Do it
                 await _weekUserLinkService.SaveAsync(week);
 
-                if (amountOwed <= 0)
+                if (remainingOwed <= 0)
                     break;
             }
+
+            var user = await _userService.GetByIdAsync(userId);
+            _telemetryService.TrackEvent("Payment",
+                new
+                {
+                    username = $"{user.FirstName} {user.LastName}",
+                    totalAmountToBePaid,
+                    totalAmountPaid,
+                    amountOwed,
+                    remainingOwed
+                });
 
             return unpaidWeeks;
         }
