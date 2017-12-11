@@ -11,9 +11,12 @@ namespace SandwichClub.Api.GraphQL.Types
             IPaymentService paymentService)
         {
             FieldAsync<DecimalGraphType>("totalCost", "The sum of all week costs for weeks the user is signed up to", resolve: async context => await weekService.GetTotalCostsForUserAsync(context.Source.UserId));
-            FieldAsync<DecimalGraphType>("totalPaid", "The sum of amounts paid for all weeks", resolve: async context => await paymentService.PayOwedForUser(context.Source.UserId));
+            FieldAsync<DecimalGraphType>("totalPaid", "The sum of amounts paid for all weeks", resolve: async context => await paymentService.GetTotalPaidForUser(context.Source.UserId));
 
             FieldAsync<DecimalGraphType>("totalOwed", "The total amount owed by the user", resolve: async context => await paymentService.GetTotalOwedForUser(context.Source.UserId));
+
+            FieldAsync<ListGraphType<PaymentType>>("payments", "The users payments",
+                resolve: async context => await paymentService.GetByUserIdAsync(context.Source.UserId));
 
             FieldAsync<ListGraphType<WeekUserLinkType>>("weeks", "The users joined weeks",
                 arguments: new QueryArguments(

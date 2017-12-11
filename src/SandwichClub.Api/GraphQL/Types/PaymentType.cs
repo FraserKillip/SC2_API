@@ -7,7 +7,7 @@ namespace SandwichClub.Api.GraphQL.Types
     {
         public PaymentType(IUserService userService)
         {
-            FieldAsync<UserType>("user",
+            FieldAsync<UserType>("user", "User that made the payment",
                 resolve: async context => await userService.GetByIdAsync(context.Source.UserId));
         }
     }

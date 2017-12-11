@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
@@ -50,5 +51,8 @@ namespace SandwichClub.Api.Services
                 Amount = amountOwed,
             });
         }
+
+        public Task<IEnumerable<Payment>> GetByUserIdAsync(int userId)
+            => Repository.GetByUserId(userId);
     }
 }
