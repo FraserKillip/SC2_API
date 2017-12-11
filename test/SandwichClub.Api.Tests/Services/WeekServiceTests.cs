@@ -63,29 +63,6 @@ namespace SandwichClub.Api.Tests.Services
                 Assert.Equal(expectedPayment, calculatedPayment);
             }
 
-            [Theory]
-            [InlineData(2, 10, 5)]
-            [InlineData(10, 10, 1)]
-            public async Task TestMarkAllLinksAsPaidForUserAsync(int users, double cost, double expectedPayment)
-            {
-                // Given
-                var userId = 82;
-                Week.Cost = cost;
-                AddWeekLinks(users);
-                _weekLinks.First().UserId = userId;
-
-                // When
-                var result = await Service.MarkAllLinksAsPaidForUserAsync(1);
-
-                // Verify
-                var paidLinks = result.ToList();
-                Assert.Equal(1, paidLinks.Count);
-                var link = paidLinks.First();
-
-                Assert.Equal(expectedPayment, link.Paid, 3);
-                Mock<IWeekUserLinkService>().Verify(i => i.SaveAsync(It.IsAny<WeekUserLink>()), Times.Once);
-            }
-
             [Fact]
             public async Task TestGetTotalCostsForUserAsync()
             {

@@ -1,3 +1,4 @@
+using System;
 using System.ComponentModel;
 
 namespace SandwichClub.Api.Repositories.Models
@@ -9,6 +10,7 @@ namespace SandwichClub.Api.Repositories.Models
         public int UserId { get; set; }
         [Description("The id of the week")]
         public int WeekId { get; set; }
+        [Obsolete("Paid amounts migrated to Payments")]
         [Description("The amount paid for the week")]
         public double Paid { get; set; }
         [Description("Whether or not the user has joined SandwichClub for the week")]
