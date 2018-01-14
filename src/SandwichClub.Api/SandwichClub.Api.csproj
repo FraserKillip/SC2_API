@@ -7,7 +7,7 @@
     <OutputType>Exe</OutputType>
     <PackageId>SandwichClub.Api</PackageId>
     <NetStandardImplicitPackageVersion>1.6.0</NetStandardImplicitPackageVersion>
-    <RuntimeFrameworkVersion>2.0.0-preview2-25407-01</RuntimeFrameworkVersion>
+    <RuntimeFrameworkVersion>2.0.0</RuntimeFrameworkVersion>
     <ApplicationInsightsResourceId>/subscriptions/979e20ad-e5a6-4b51-9f1e-daa71336420d/resourcegroups/mcknight.ninja/providers/microsoft.insights/components/SandwichClub.Api-Prod</ApplicationInsightsResourceId>
     <ApplicationInsightsAnnotationResourceId>/subscriptions/979e20ad-e5a6-4b51-9f1e-daa71336420d/resourcegroups/mcknight.ninja/providers/microsoft.insights/components/SandwichClub.Api-Prod</ApplicationInsightsAnnotationResourceId>
   </PropertyGroup>
@@ -20,7 +20,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.2.0-beta1" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.0.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.0.2" />
     <PackageReference Include="Microsoft.AspNetCore.Server.IISIntegration" Version="2.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.Server.Kestrel" Version="2.0.1" />
     <PackageReference Include="Microsoft.Data.Sqlite" Version="2.0.0" />
