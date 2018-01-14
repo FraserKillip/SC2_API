@@ -11,9 +11,10 @@ using System;
 namespace SandwichClub.Api.Migrations
 {
     [DbContext(typeof(ScContext))]
-    partial class ScContextModelSnapshot : ModelSnapshot
+    [Migration("20171211080845_NewPaymentSystem")]
+    partial class NewPaymentSystem
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -32,7 +33,7 @@ namespace SandwichClub.Api.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Payments");
+                    b.ToTable("Payment");
                 });
 
             modelBuilder.Entity("SandwichClub.Api.Repositories.Models.User", b =>

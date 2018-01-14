@@ -7,7 +7,10 @@ namespace SandwichClub.Api.GraphQL
 {
     public class SandwichClubMutation : ObjectGraphType
     {
-        public SandwichClubMutation(IScSession session, IUserService userService, IWeekUserLinkService weekUserLinkService, IWeekService weekService)
+        public SandwichClubMutation(IScSession session,
+            IUserService userService,
+            IPaymentService paymentService,
+            IWeekService weekService)
         {
 
             Name = "Mutation";
@@ -28,7 +31,7 @@ namespace SandwichClub.Api.GraphQL
                 }
             );
 
-            FieldAsync<ListGraphType<WeekUserLinkType>>(
+            FieldAsync<PaymentType>(
                 "markAllWeeksPaidForUser",
                 arguments: new QueryArguments(
                     new QueryArgument<IntGraphType> { Name = "userId", Description = "UserId to mark weeks paid for" }
@@ -37,7 +40,7 @@ namespace SandwichClub.Api.GraphQL
                 {
                     var userId = context.GetArgument<int>("userId");
 
-                    return await weekService.MarkAllLinksAsPaidForUserAsync(userId);
+                    return await paymentService.PayOwedForUser(userId);
                 }
             );
 

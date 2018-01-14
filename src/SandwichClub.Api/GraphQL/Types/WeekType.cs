@@ -8,10 +8,10 @@ namespace SandwichClub.Api.GraphQL.Types
     {
         public WeekType(IWeekService weekService, IWeekUserLinkService weekUserLinkService, IUserService userService)
         {
-            FieldAsync<DecimalGraphType>("costPerUser", "The amount owed per user", resolve: async context => await weekService.GetAmountToPayPerPersonAsync(((Week)context.Source).WeekId));
+            FieldAsync<DecimalGraphType>("costPerUser", "The amount owed per user", resolve: async context => await weekService.GetAmountToPayPerPersonAsync(context.Source.WeekId));
 
-            FieldAsync<ListGraphType<WeekUserLinkType>>("users", resolve: async context => await weekUserLinkService.GetByWeekIdAsync(((Week)context.Source).WeekId));
-            FieldAsync<UserType>("shopper", resolve: async context => ((Week)context.Source).ShopperUserId.HasValue ? await userService.GetByIdAsync(((Week)context.Source).ShopperUserId.Value) : null);
+            FieldAsync<ListGraphType<WeekUserLinkType>>("users", resolve: async context => await weekUserLinkService.GetByWeekIdAsync(context.Source.WeekId));
+            FieldAsync<UserType>("shopper", resolve: async context => context.Source.ShopperUserId.HasValue ? await userService.GetByIdAsync(context.Source.ShopperUserId.Value) : null);
         }
     }
 }
