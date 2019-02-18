@@ -26,7 +26,7 @@ namespace SandwichClub.Api.Tests.GraphQL
         {
             // Given
             var selectionSet = new SelectionSet();
-            selectionSet.Add(new Field { Name = "__shema" });
+            selectionSet.Add(new Field(new NameNode("__schema"), new NameNode("__schema")));
             var operation = new Operation { SelectionSet = selectionSet };
 
             // When
@@ -42,7 +42,7 @@ namespace SandwichClub.Api.Tests.GraphQL
         {
             // Given
             var selectionSet = new SelectionSet();
-            selectionSet.Add(new Field { Name = "__types" });
+            selectionSet.Add(new Field(new NameNode("__types"), new NameNode("__types")));
             var operation = new Operation { SelectionSet = selectionSet };
 
             // When
@@ -58,7 +58,7 @@ namespace SandwichClub.Api.Tests.GraphQL
         {
             // Given
             var selectionSet = new SelectionSet();
-            selectionSet.Add(new Field { Name = "me" });
+            selectionSet.Add(new Field(new NameNode("me"), new NameNode("me")));
             var operation = new Operation { SelectionSet = selectionSet };
 
             // When
@@ -74,8 +74,8 @@ namespace SandwichClub.Api.Tests.GraphQL
         {
             // Given
             var selectionSet = new SelectionSet();
-            selectionSet.Add(new Field { Name = "__types" });
-            selectionSet.Add(new Field { Name = "me" });
+            selectionSet.Add(new Field(new NameNode("__types"), new NameNode("__types")));
+            selectionSet.Add(new Field(new NameNode("me"), new NameNode("me")));
             var operation = new Operation { SelectionSet = selectionSet };
 
             // When
@@ -92,8 +92,8 @@ namespace SandwichClub.Api.Tests.GraphQL
             // Given
             Session.CurrentUser = new User();
             var selectionSet = new SelectionSet();
-            selectionSet.Add(new Field { Name = "__types" });
-            selectionSet.Add(new Field { Name = "me" });
+            selectionSet.Add(new Field(new NameNode("__types"), new NameNode("__types")));
+            selectionSet.Add(new Field(new NameNode("me"), new NameNode("me")));
             var operation = new Operation { SelectionSet = selectionSet };
 
             // When
