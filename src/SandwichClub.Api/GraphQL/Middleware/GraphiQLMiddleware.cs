@@ -100,12 +100,12 @@ namespace SandwichClub.Api.GraphQL.Middleware
         }
     </style>
     <title>GraphiQL</title>
-    <link rel='stylesheet' href='https://cdn.jsdelivr.net/graphiql/0.7.5/graphiql.css' />
+    <link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/graphiql@0.12.0/graphiql.css' />
     <script src='https://code.jquery.com/jquery-3.2.1.min.js'></script>
     <script src='https://cdn.jsdelivr.net/fetch/latest/fetch.min.js'></script>
     <script src='https://cdn.jsdelivr.net/react/latest/react.min.js'></script>
     <script src='https://cdn.jsdelivr.net/react/latest/react-dom.min.js'></script>
-    <script src='https://cdn.jsdelivr.net/graphiql/0.7.5/graphiql.min.js'></script>
+    <script src='https://cdn.jsdelivr.net/npm/graphiql@0.12.0/graphiql.min.js'></script>
 </head>
 <body>
     <div id='graphiql'>Loading...</div>
