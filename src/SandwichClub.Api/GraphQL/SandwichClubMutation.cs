@@ -55,7 +55,7 @@ namespace SandwichClub.Api.GraphQL
                 {
                     var shopperId = context.GetArgument<int?>("shopperId");
                     var weekId = context.GetArgument<int>("weekId");
-                    var cost = context.GetArgument<float?>("cost");
+                    var cost = context.GetArgument<double?>("cost");
 
                     return await weekService.SaveAsync(new Week
                     {
