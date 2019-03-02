@@ -8,6 +8,7 @@ using GraphQL.Types;
 using GraphQL.Validation;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json.Linq;
 using SandwichClub.Api.Services;
@@ -21,6 +22,7 @@ namespace SandwichClub.Api.GraphQL.Middleware
     {
         private readonly string graphqlPath;
         private readonly RequestDelegate next;
+        private readonly ILogger<GraphQLMiddleware> _logger;
         // private readonly ISchema schema;
 
         /// <summary>
@@ -35,7 +37,7 @@ namespace SandwichClub.Api.GraphQL.Middleware
         /// <exception cref="ArgumentNullException">
         ///     Throws <see cref="ArgumentNullException" /> if <paramref name="next" /> or <paramref name="options" /> is null.
         /// </exception>
-        public GraphQLMiddleware(RequestDelegate next , IOptions<GraphQLOptions> options)
+        public GraphQLMiddleware(RequestDelegate next, IOptions<GraphQLOptions> options, ILogger<GraphQLMiddleware> logger)
         {
             if (next == null)
             {
@@ -45,10 +47,15 @@ namespace SandwichClub.Api.GraphQL.Middleware
             {
                 throw new ArgumentNullException(nameof(options));
             }
+            if (logger == null)
+            {
+                throw new ArgumentNullException(nameof(logger));
+            }
 
             this.next = next;
             var optionsValue = options.Value;
             graphqlPath = string.IsNullOrEmpty(optionsValue?.GraphQLPath) ? GraphQLOptions.DefaultGraphQLPath : optionsValue.GraphQLPath;
+            _logger = logger;
             // schema = optionsValue?.Schema;
         }
 
@@ -120,10 +127,21 @@ namespace SandwichClub.Api.GraphQL.Middleware
             return a && b;
         }
 
-        private static Task WriteResponseAsync(HttpResponse response , ExecutionResult executionResult)
+        private Task WriteResponseAsync(HttpResponse response , ExecutionResult executionResult)
         {
             response.ContentType = "application/json";
-            response.StatusCode = executionResult.Errors == null || executionResult.Errors?.Count == 0 ? 200 : 400;
+
+            var erred = executionResult.Errors?.Count > 0;
+
+            if (erred)
+            {
+                foreach (var error in executionResult.Errors)
+                {
+                    _logger.LogError(error, error.Message);
+                }
+            }
+
+            response.StatusCode = erred ? 400 : 200;
             var graphqlResponse = new DocumentWriter().Write(executionResult);
             return response.WriteAsync(graphqlResponse);
         }
